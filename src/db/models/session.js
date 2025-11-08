@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const sessionSchema = new mongoose.Schema(
     {
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId, ref: 'user',
         required: true,
     },
     accessToken: {
@@ -26,5 +26,5 @@ const sessionSchema = new mongoose.Schema(
   { versionKey: false, timestamps: true },
 );
 
-export const SessionCollection = mongoose.model('Session', sessionSchema);
+export const SessionCollection = mongoose.model('session', sessionSchema);
 
