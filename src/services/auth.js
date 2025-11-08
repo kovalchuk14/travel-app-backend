@@ -13,3 +13,18 @@ export const registerUser = async (payload) => {
     password: encryptedPassword,
   });
 };
+
+
+export const logoutUser = async (sessionId) => {
+  if (!sessionId) {
+    throw createHttpError(401, 'Session ID not provided');
+  }
+
+  const session = await SessionCollection.findById(sessionId);
+
+  if (!session) {
+    throw createHttpError(401, 'Invalid session');
+  }
+
+  await SessionCollection.deleteOne({ _id: sessionId });
+};
