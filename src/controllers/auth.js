@@ -3,7 +3,7 @@ import { loginUser } from '../services/auth.js';
 
 import { createSession } from '../services/auth.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
-import { SessionCollection } from '../db/models/session.js';
+import { SessionsCollection } from '../db/models/session.js';
 import { refreshUsersSession } from '../services/auth.js';
 
 
@@ -36,18 +36,17 @@ export const registerUserController = async (req, res) => {
 
 export const loginUserController = async (req, res) => {
   const user = await loginUser(req.body);
-
-  await SessionCollection.deleteOne({ userId: user._id });
+  await SessionsCollection.deleteOne({ userId: user._id });
 
   const newSession = await createSession(user._id);
   setupSession(res, newSession);
 
   res.json({
     status: 200,
-    message: 'Successfully logged in!',
+    message: 'Successfully logged in an user!',
     data: user,
   });
-}
+};
 
 export const refreshUserSessionController = async (req, res) => {
   const session = await refreshUsersSession({

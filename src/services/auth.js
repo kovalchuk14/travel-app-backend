@@ -1,15 +1,16 @@
 import { UsersCollection } from '../db/models/user.js';
-import { SessionCollection } from '../db/models/session.js';
+import { SessionsCollection } from '../db/models/session.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
+import { randomBytes } from 'crypto';
 import createHttpError from 'http-errors';
 
 
 export const createSession = async (userId) => {
-  const accessToken = crypto.randomBytes(30).toString('base64');
-  const refreshToken = crypto.randomBytes(30).toString('base64');
-  return SessionCollection.create({
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+
+  return SessionsCollection.create({
     userId,
     accessToken,
     refreshToken,
@@ -31,9 +32,9 @@ export const registerUser = async (payload) => {
 };
 
 export const loginUser = async (payload) => {
-  const user = await UsersCollection.findOne({ email: payload.email })
+  const user = await UsersCollection.findOne({ email: payload.email });
   if (!user) {
-    throw createHttpError(401, 'User not found');
+    throw createHttpError(404, 'User not found');
   }
   const isEqual = await bcrypt.compare(payload.password, user.password);
   if (!isEqual) {
@@ -44,7 +45,7 @@ export const loginUser = async (payload) => {
 
 
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
-  const session = await SessionCollection.findOne({
+  const session = await SessionsCollection.findOne({
     _id: sessionId,
     refreshToken,
   });
@@ -60,7 +61,7 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
     throw createHttpError(401, 'Session token expired');
   }
 
-  await SessionCollection.deleteOne({ _id: sessionId, refreshToken });
+  await SessionsCollection.deleteOne({ _id: sessionId, refreshToken });
 
   const newSession = await createSession();
 
