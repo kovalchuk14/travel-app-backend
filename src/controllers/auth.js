@@ -11,16 +11,13 @@ export const registerUserController = async (req, res) => {
 };
 
 export const logoutUserController = async (req, res) => {
-  const { sessionId } = req.cookies;
-
-  if (!sessionId) {
-    return res.status(401).json({ message: 'No active session' });
+  if(req.cookies.sessionId){
+    await logoutUser(req.cookies.sessionId);
   }
 
-  await logoutUser(sessionId);
-
+  res.clearCookie('accessToken');
   res.clearCookie('refreshToken');
   res.clearCookie('sessionId');
 
-  res.status(200).json({ message: 'Logout successful' });
+  res.status(204);
 };

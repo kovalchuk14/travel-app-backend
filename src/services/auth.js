@@ -16,15 +16,5 @@ export const registerUser = async (payload) => {
 
 
 export const logoutUser = async (sessionId) => {
-  if (!sessionId) {
-    throw createHttpError(401, 'Session ID not provided');
-  }
-
-  const session = await SessionCollection.findById(sessionId);
-
-  if (!session) {
-    throw createHttpError(401, 'Invalid session');
-  }
-
-  await SessionCollection.deleteOne({ _id: sessionId });
+  await SessionsCollection .deleteOne({ _id: sessionId });
 };
