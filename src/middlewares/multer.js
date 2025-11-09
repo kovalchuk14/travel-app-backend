@@ -1,10 +1,6 @@
 import multer from 'multer';
 import { TEMP_UPLOAD_DIR } from '../constants/cloudinary.js';
 
-import { createDirIfNotExists } from '../utils/createDirIfNotExists.js';
-
-await createDirIfNotExists(TEMP_UPLOAD_DIR);
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, TEMP_UPLOAD_DIR);

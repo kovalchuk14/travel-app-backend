@@ -7,7 +7,7 @@ export const createStorySchema = Joi.object({
   }),
   description: Joi.string().max(2500).required().messages({
     'string.max': 'The description cannot exceed 2500 characters',
-    'any.required': 'The title field is required',
+    'any.required': 'The description field is required',
   }),
   category: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/)
