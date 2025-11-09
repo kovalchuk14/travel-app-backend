@@ -1,14 +1,17 @@
 import { Router } from 'express';
 
 import { validateBody } from '../middlewares/validateBody.js';
-import { createStorySchema, updateStorySchema } from '../../validation/stories.js';
-import { createStoryController, patchStoryController } from '../controllers/createStoryController.js';
+
+import { createStorySchema, updateStorySchema } from '../validation/stories.js';
+import { createStoryController, patchStoryController } from '../controllers/story.js';
+
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
 import { upload } from '../middlewares/multer.js';
 import { IsVaildId } from './IsValidId.js';
+
 
 const router = Router();
 
@@ -21,6 +24,7 @@ router.post(
   ctrlWrapper(createStoryController),
 );
 
+
 router.patch(
   '/:storyId',
   IsVaildId,
@@ -28,5 +32,4 @@ router.patch(
   validateBody(updateStorySchema),
   ctrlWrapper(patchStoryController),
 )
-
 export default router;

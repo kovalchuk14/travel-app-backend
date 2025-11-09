@@ -3,8 +3,8 @@ import createHttpError from 'http-errors';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { createStory } from '../services/story.js';
 
-import { createStory } from '../services/createStory.js';
 
 export const createStoryController = async (req, res) => {
   if (!req.user || !req.user._id) {
