@@ -6,7 +6,6 @@ import { validateBody } from '../middlewares/validateBody.js';
 const router = Router();
 
 router.post('/register',validateBody(registerUserSchema),ctrlWrapper(registerUserController),);
-
 router.post('/logout', ctrlWrapper(logoutUserController));
 
 export default router;
