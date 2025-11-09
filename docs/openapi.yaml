@@ -17,9 +17,9 @@ servers:
   - url: http://localhost:3000/api
     description: Local server
 paths:
-  # /auth/register:
-    # post:
-      # $ref: '../swagger/paths/auth/register.yaml'
+  /auth/register:
+    post:
+      $ref: '../swagger/paths/auth/register.yaml'
   # /auth/login:
     # post:
       # $ref: '../swagger/paths/auth/login.yaml'
@@ -35,3 +35,4 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
