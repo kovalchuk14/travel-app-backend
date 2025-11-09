@@ -1,4 +1,4 @@
-import  {UsersCollection} from '../db/models/user.js';
+import { UsersCollection } from '../db/models/user.js';
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
@@ -14,7 +14,6 @@ export const registerUser = async (payload) => {
   });
 };
 
-
 export const logoutUser = async (sessionId) => {
-  await SessionsCollection .deleteOne({ _id: sessionId });
+  await SessionsCollection.deleteOne({ _id: sessionId });
 };
