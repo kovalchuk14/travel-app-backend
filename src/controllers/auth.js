@@ -1,6 +1,7 @@
 import { registerUser, loginUser, logoutUser, createSession} from '../services/auth.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/session.js';
+import { refreshUsersSession } from '../services/auth.js';
 
 const setupSession = (res, session) => {
   res.cookie('accessToken', session.accessToken, {
@@ -55,4 +56,18 @@ export const logoutUserController = async (req, res) => {
   res.clearCookie('sessionId');
 
   res.status(204).send();
+};
+
+export const refreshUserSessionController = async (req, res) => {
+  const session = await refreshUsersSession({
+    sessionId: req.cookies.sessionId,
+    refreshToken: req.cookies.refreshToken,
+  });
+
+  setupSession(res, session);
+
+  res.json({
+    status: 200,
+    message: 'Successfully refreshed a session!',
+  });
 };
