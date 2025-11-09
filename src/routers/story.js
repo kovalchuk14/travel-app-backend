@@ -10,7 +10,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
 import { upload } from '../middlewares/multer.js';
-import { IsVaildId } from './IsValidId.js';
+import { IsVaildId } from '..middlewares/IsVaildId';
 
 
 const router = Router();
