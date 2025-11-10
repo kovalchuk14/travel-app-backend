@@ -1,9 +1,10 @@
+// src/index.js
 import dotenv from 'dotenv';
 dotenv.config();
 
 import { setupServer } from './server.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
-import userRouter from './routes/user.js';
+import userRouter from './routers/user.js';
 
 async function bootstrap() {
   try {

@@ -1,23 +1,48 @@
-import { UsersCollection } from '../models/user.js';
+import bcrypt from 'bcryptjs';
+import { UsersCollection } from '../db/models/user.js';
+import createHttpError from 'http-errors';
 
 export const updateUser = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const { name, email, password } = req.body;
+  const userId = req.user._id;
+  const { name, email, password } = req.body;
 
-    const updatedFields = {};
-    if (name) updatedFields.name = name;
-    if (email) updatedFields.email = email;
-    if (password) updatedFields.password = password;
-
-    const updatedUser = await UsersCollection.findByIdAndUpdate(
-      userId,
-      { $set: updatedFields },
-      { new: true },
-    );
-
-    res.json(updatedUser);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  if (!name && !email && !password) {
+    throw createHttpError(400, 'No fields provided for update');
   }
+
+  const updates = {};
+
+  if (email) {
+    const existingUser = await UsersCollection.findOne({ email });
+    if (existingUser && existingUser._id.toString() !== userId.toString()) {
+      throw createHttpError(409, 'Email already in use');
+    }
+    updates.email = email;
+  }
+
+  if (password) {
+    if (password.length < 6) {
+      throw createHttpError(400, 'Password must be at least 6 characters long');
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    updates.password = hashedPassword;
+  }
+
+  if (name) {
+    if (name.trim().length < 2) {
+      throw createHttpError(400, 'Name must be at least 2 characters long');
+    }
+    updates.name = name.trim();
+  }
+
+  const updatedUser = await UsersCollection.findByIdAndUpdate(
+    userId,
+    { $set: updates },
+    { new: true },
+  );
+
+  const safeUser = updatedUser.toObject();
+  delete safeUser.password;
+
+  res.status(200).json(safeUser);
 };

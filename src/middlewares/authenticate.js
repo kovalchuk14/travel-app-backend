@@ -1,5 +1,9 @@
 import jwt from 'jsonwebtoken';
-import { UsersCollection } from '../models/user.js';
+import { UsersCollection } from '../db/models/user.js';
+import bcrypt from 'bcryptjs';
+
+const hashed = await bcrypt.hash('password123', 10);
+console.log(hashed);
 
 export const authenticate = async (req, res, next) => {
   try {
