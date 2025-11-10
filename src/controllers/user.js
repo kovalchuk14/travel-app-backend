@@ -1,11 +1,10 @@
-import { getUserById, getCurrentUser  } from '../models/user.js';
+import { getUserById } from '../services/user.js';
 
-export const getCurrentUserController = async (req, res) => {
-    const user = await getCurrentUser();
-    
-  res.json({
+export const getCurrentUser = async (req, res) => {
+  const user = req.user;
+  res.status(200).json({
     status: 200,
-    message: 'Successfully found user!',
+    message: 'Current user retrieved successfully',
     data: user,
   });
 };
@@ -25,3 +24,4 @@ export const getUserByIdController = async (req, res) => {
         data: user,
     });
 }
+
