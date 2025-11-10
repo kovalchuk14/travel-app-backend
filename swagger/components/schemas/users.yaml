@@ -1,0 +1,45 @@
+  type: object
+  required:
+    - status
+    - message
+    - data
+  properties:
+    status:
+      description: "HTTP status code"
+      type: integer
+      example: 201
+    message:
+      description: "Server response message"
+      type: string
+      example: "Successfully registered a user!"
+    data:
+      type: object
+      required:
+        - _id
+        - name
+        - email
+        - createdAt
+        - updatedAt
+      properties:
+        _id:
+          description: "User's unique ID"
+          type: string
+          example: 6910a2425660e938dabeba42
+        name:
+          description: "User's name"
+          type: string
+          example: John Doe
+        email:
+          description: "User's email address"
+          type: string
+          example: johndoe@gmail.com
+        createdAt:
+          description: "Date and time when the user was created"
+          type: string
+          format: date-time
+          example: '2025-11-09T14:16:34.526Z'
+        updatedAt:
+          description: "Date and time when the user was last updated"
+          type: string
+          format: date-time
+          example: '2025-11-09T14:16:34.526Z'
