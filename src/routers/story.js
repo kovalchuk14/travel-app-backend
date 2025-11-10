@@ -2,13 +2,15 @@ import { Router } from 'express';
 
 import { validateBody } from '../middlewares/validateBody.js';
 
-import { getAllStoriesController } from '../controllers/story.js';
-import { createStorySchema, updateStorySchema } from '../validation/stories.js';
 import {
+  getAllStoriesController,
+  getStoryByIdController,
   createStoryController,
   patchStoryController,
 } from '../controllers/story.js';
-import { IsVaildId } from '../middlewares/IsValidId.js';
+import { createStorySchema, updateStorySchema } from '../validation/stories.js';
+
+import { IsValidId } from '../middlewares/IsValidId.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
@@ -19,6 +21,8 @@ import { upload } from '../middlewares/multer.js';
 const router = Router();
 
 router.get('/', authenticateOptional, ctrlWrapper(getAllStoriesController));
+
+router.get('/:storyId', ctrlWrapper(getStoryByIdController));
 
 router.post(
   '/',
@@ -31,7 +35,7 @@ router.post(
 router.patch(
   '/:storyId',
   authenticate,
-  IsVaildId,
+  IsValidId,
   upload.single('storyImage'),
   validateBody(updateStorySchema),
   ctrlWrapper(patchStoryController),

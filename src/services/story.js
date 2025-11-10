@@ -17,7 +17,10 @@ export const getAllStories = async ({
 
   const userFilter = userId ? { userId } : {};
 
-  const storiesQuery = storiesCollection.find(userFilter);
+  const storiesQuery = storiesCollection
+    .find(userFilter)
+    .populate('category', 'name')
+    .populate('userId', 'name avatarUrl');
 
   if (filter.category) {
     storiesQuery.where('category').equals(filter.category);
@@ -34,6 +37,14 @@ export const getAllStories = async ({
     data: stories,
     ...paginationData,
   };
+};
+
+export const getStoryById = async (storyId) => {
+  const story = await storiesCollection
+    .findById(storyId)
+    .populate('category')
+    .populate('userId', 'name avatarUrl');
+  return story;
 };
 
 export const patchStory = async (payload) => {
