@@ -10,7 +10,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
 import { upload } from '../middlewares/multer.js';
-import { IsVaildId } from '..middlewares/IsVaildId';
+import { isValidId } from '../middlewares/IsValidId.js';
 
 
 const router = Router();
@@ -27,7 +27,7 @@ router.post(
 
 router.patch(
   '/:storyId',
-  IsVaildId,
+  isValidId,
   upload.single('storyImage'),
   validateBody(updateStorySchema),
   ctrlWrapper(patchStoryController),

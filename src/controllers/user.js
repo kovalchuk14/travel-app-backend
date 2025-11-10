@@ -1,6 +1,6 @@
 import { getUserById } from '../services/user.js';
 
-/*export const getCurrentUser = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   const user = req.user;
   res.status(200).json({
     status: 200,
@@ -8,7 +8,7 @@ import { getUserById } from '../services/user.js';
     data: user,
   });
 };
-*/
+
 
 export const getUserByIdController = async (req, res) => {
     const { userId } = req.params;
