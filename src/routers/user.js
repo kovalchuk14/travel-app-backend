@@ -6,7 +6,7 @@ import { getCurrentUser, getUserByIdController } from '../controllers/user.js';
 const router = Router();
 
 router.use(authenticate);
-router.get('/me', authenticate, ctrlWrapper(getCurrentUser));
+router.get('/me', ctrlWrapper(getCurrentUser));
 router.get('/:userId', ctrlWrapper(getUserByIdController));
 
 
