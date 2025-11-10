@@ -1,39 +1,63 @@
-import { UsersCollection } from '../db/models/User.js';
-import { ArticlesCollection } from '../db/models/Article.js';
+import { UsersCollection } from '../db/models/user.js';
+import { TravellersCollection } from '../db/models/traveller.js';
 
-export const toggleSavedArticle = async (req, res) => {
+// Додати статтю у savedArticles
+export const addSavedArticle = async (req, res) => {
   const { articleId } = req.params;
+  const userId = req.userId;
 
   try {
-    const user = await UsersCollection.findById(req.userId);
+    const user = await UsersCollection.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const article = await ArticlesCollection.findById(articleId);
+    const article = await TravellersCollection.findById(articleId);
     if (!article) return res.status(404).json({ message: 'Article not found' });
 
-    const isSaved = user.savedArticles.some(
-      (id) => id.toString() === articleId,
-    );
-
-    if (isSaved) {
-      user.savedArticles = user.savedArticles.filter(
-        (id) => id.toString() !== articleId,
-      );
-      await user.save();
-      return res.status(200).json({
-        message: 'Article removed from saved list',
-        savedArticles: user.savedArticles,
-      });
-    } else {
+    if (!user.savedArticles?.some((id) => id.toString() === articleId)) {
+      user.savedArticles = user.savedArticles || [];
       user.savedArticles.push(articleId);
-      await user.save();
-      return res.status(200).json({
-        message: 'Article added to saved list',
-        savedArticles: user.savedArticles,
-      });
+      article.favoriteCount += 1;
+      await Promise.all([user.save(), article.save()]);
     }
+
+    res.status(200).json({
+      message: 'Article added to saved list',
+      savedArticles: user.savedArticles,
+      favoriteCount: article.favoriteCount,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-// Made by Yevhenii Feforchenko
+
+// Видалити статтю з savedArticles
+export const removeSavedArticle = async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.userId;
+
+  try {
+    const user = await UsersCollection.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const article = await TravellersCollection.findById(articleId);
+    if (!article) return res.status(404).json({ message: 'Article not found' });
+
+    if (user.savedArticles?.some((id) => id.toString() === articleId)) {
+      user.savedArticles = user.savedArticles.filter(
+        (id) => id.toString() !== articleId,
+      );
+      article.favoriteCount = Math.max(article.favoriteCount - 1, 0);
+      await Promise.all([user.save(), article.save()]);
+    }
+
+    res.status(200).json({
+      message: 'Article removed from saved list',
+      savedArticles: user.savedArticles,
+      favoriteCount: article.favoriteCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// By Yevhenii Fedorchenko

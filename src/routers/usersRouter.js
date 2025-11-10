@@ -1,12 +1,17 @@
+// usersRouter.js
 import express from 'express';
-import { toggleSavedArticle } from '../controllers/usersController.js';
+import {
+  addSavedArticle,
+  removeSavedArticle,
+} from '../controllers/usersController.js';
 import { auth } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-// POST /api/users/saved-articles/:articleId
-router.post('/saved-articles/:articleId', auth, toggleSavedArticle);
+// Приватні ендпоінти для saved articles
+router.post('/saved-articles/:articleId', auth, addSavedArticle);
+router.delete('/saved-articles/:articleId', auth, removeSavedArticle);
 
 export default router;
 
-// Made by Yevhenii Feforchenko
+// Made by Yevhenii Fedorchenko
