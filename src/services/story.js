@@ -6,19 +6,27 @@ export const createStory = async (payload) => {
   return story;
 };
 
-export const getAllStories = async ({ userId, page = 1, perPage = 9 }) => {
+export const getAllStories = async ({
+  userId,
+  filter = {},
+  page = 1,
+  perPage = 9,
+}) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
   const userFilter = userId ? { userId } : {};
 
   const storiesQuery = storiesCollection.find(userFilter);
-  const storiesCount = await storiesCollection
-    .find()
-    .merge(storiesQuery)
-    .countDocuments();
 
-  const stories = await storiesQuery.skip(skip).limit(limit).exec();
+  if (filter.category) {
+    storiesQuery.where('category').equals(filter.category);
+  }
+
+  const [storiesCount, stories] = await Promise.all([
+    storiesCollection.find().merge(storiesQuery).countDocuments(),
+    storiesQuery.skip(skip).limit(limit).sort({ favoriteCount: -1 }).exec(),
+  ]);
 
   const paginationData = calculatePaginationData(storiesCount, perPage, page);
 

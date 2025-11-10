@@ -8,15 +8,27 @@ import { createStory, patchStory } from '../services/story.js';
 import { getAllStories } from '../services/story.js';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 export const getAllStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
+  const filter = parseFilterParams(req.query);
 
   let stories;
-  if (req.user?._id) {
-    stories = await getAllStories({ userId: req.user._id, page, perPage });
+
+  // На фронтенді:
+  // Сторінка «всі історії» → робить GET /stories
+  // Сторінка «мої історії» → робить GET /stories?mine=true
+
+  if (req.query.mine === 'true' && req.user?._id) {
+    stories = await getAllStories({
+      userId: req.user._id,
+      filter,
+      page,
+      perPage,
+    });
   } else {
-    stories = await getAllStories({ page, perPage });
+    stories = await getAllStories({ filter, page, perPage });
   }
 
   res.status(200).json({

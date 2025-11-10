@@ -24,6 +24,7 @@ const storiesSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    favoriteCount: { type: Number, default: 0 },
   },
   { timestamps: true, versionKey: false },
 );
