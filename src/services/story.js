@@ -45,3 +45,21 @@ export const getUserStories = async ({ userId, page = 1, perPage = 9 }) => {
     ...paginationData,
   };
 };
+
+export const patchStory = async (payload) => {
+  const { storyId, ...updateFields } = payload;
+  const rawResult = await storiesCollection.findOneAndUpdate(
+    {
+      _id: storyId,
+      userId: payload.userId,
+    },
+    updateFields,
+    {
+      new: true,
+    },
+  );
+
+  if (!rawResult || !rawResult.value) return null;
+
+  return rawResult.value;
+};
