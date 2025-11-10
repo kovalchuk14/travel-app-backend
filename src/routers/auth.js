@@ -5,6 +5,7 @@ import { registerUserController, loginUserController, logoutUserController, refr
 import { validateBody } from '../middlewares/validateBody.js';
 const router = Router();
 
+
 router.post('/register', validateBody(registerUserSchema), ctrlWrapper(registerUserController),);
 
 router.post('/login',validateBody(loginUserSchema), ctrlWrapper(loginUserController));
