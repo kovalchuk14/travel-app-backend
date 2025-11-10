@@ -9,7 +9,7 @@ import { createStoryController, patchStoryController } from '../controllers/stor
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {authenticate}  from '../middlewares/authenticate.js';
 import { upload } from '../middlewares/multer.js';
-import { isValidId } from '../middlewares/IsValidId.js';
+import { isValidId } from '../middlewares/isValidId.js';
 
 
 const router = Router();
