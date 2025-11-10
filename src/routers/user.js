@@ -6,5 +6,3 @@ import { getCurrentUser } from '../controllers/user.js';
 const router = Router();
 
 router.get('/me', authenticate, ctrlWrapper(getCurrentUser));
-
-export default router;
