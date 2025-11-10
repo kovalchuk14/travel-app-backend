@@ -3,15 +3,16 @@ import { Router } from 'express';
 import { validateBody } from '../middlewares/validateBody.js';
 
 import { createStorySchema, updateStorySchema } from '../validation/stories.js';
-import { createStoryController, patchStoryController } from '../controllers/story.js';
-
+import {
+  createStoryController,
+  patchStoryController,
+} from '../controllers/story.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
 import { upload } from '../middlewares/multer.js';
-import { IsVaildId } from '..middlewares/IsVaildId';
-
+import { IsVaildId } from '../middlewares/IsValidId.js';
 
 const router = Router();
 
@@ -24,12 +25,11 @@ router.post(
   ctrlWrapper(createStoryController),
 );
 
-
 router.patch(
   '/:storyId',
   IsVaildId,
   upload.single('storyImage'),
   validateBody(updateStorySchema),
   ctrlWrapper(patchStoryController),
-)
+);
 export default router;
