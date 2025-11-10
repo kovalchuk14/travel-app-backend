@@ -6,31 +6,13 @@ export const createStory = async (payload) => {
   return story;
 };
 
-export const getAllStories = async ({ page = 1, perPage = 9 }) => {
+export const getAllStories = async ({ userId, page = 1, perPage = 9 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const storiesQuery = storiesCollection.find();
-  const storiesCount = await storiesCollection
-    .find()
-    .merge(storiesQuery)
-    .countDocuments();
+  const userFilter = userId ? { userId } : {};
 
-  const stories = await storiesQuery.skip(skip).limit(limit).exec();
-
-  const paginationData = calculatePaginationData(storiesCount, perPage, page);
-
-  return {
-    data: stories,
-    ...paginationData,
-  };
-};
-
-export const getUserStories = async ({ userId, page = 1, perPage = 9 }) => {
-  const limit = perPage;
-  const skip = (page - 1) * perPage;
-
-  const storiesQuery = storiesCollection.find({ userId });
+  const storiesQuery = storiesCollection.find(userFilter);
   const storiesCount = await storiesCollection
     .find()
     .merge(storiesQuery)

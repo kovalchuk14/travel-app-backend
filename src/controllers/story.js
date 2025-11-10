@@ -4,28 +4,20 @@ import { getEnvVar } from '../utils/getEnvVar.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
-import { createStory } from '../services/story.js';
+import { createStory, patchStory } from '../services/story.js';
 import { getAllStories } from '../services/story.js';
-import { getUserStories } from '../services/story.js';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 export const getAllStoriesController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
 
-  const stories = await getAllStories({ page, perPage });
-
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully found stories!',
-    data: stories,
-  });
-};
-
-export const getUserStoriesController = async (req, res) => {
-  const { page, perPage } = parsePaginationParams(req.query);
-
-  const stories = await getUserStories({ userId: req.user._id, page, perPage });
+  let stories;
+  if (req.user?._id) {
+    stories = await getAllStories({ userId: req.user._id, page, perPage });
+  } else {
+    stories = await getAllStories({ page, perPage });
+  }
 
   res.status(200).json({
     status: 200,
@@ -88,7 +80,7 @@ export const patchStoryController = async (req, res, next) => {
     userId: req.user._id,
   };
 
-  const story = await createStory(payload);
+  const story = await patchStory(payload);
 
   if (!story) {
     next(createHttpError(404, 'Story not found'));
