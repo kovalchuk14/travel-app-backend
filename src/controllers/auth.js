@@ -1,4 +1,9 @@
-import { registerUser, loginUser, logoutUser, createSession} from '../services/auth.js';
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  createSession,
+} from '../services/auth.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/session.js';
 import { refreshUsersSession } from '../services/auth.js';
@@ -19,7 +24,6 @@ const setupSession = (res, session) => {
     expires: new Date(Date.now() + THIRTY_DAYS),
   });
 };
-
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -45,9 +49,8 @@ export const loginUserController = async (req, res) => {
   });
 };
 
-
 export const logoutUserController = async (req, res) => {
-  if(req.cookies.sessionId){
+  if (req.cookies.sessionId) {
     await logoutUser(req.cookies.sessionId);
   }
 

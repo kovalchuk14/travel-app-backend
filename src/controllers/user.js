@@ -1,5 +1,6 @@
 import cloudinary from '../utils/cloudinary.js';
 import { UsersCollection } from '../db/models/user.js';
+import { getUserById } from '../services/user.js';
 
 export const updateAvatar = async (req, res) => {
   if (!req.file) {
@@ -7,20 +8,10 @@ export const updateAvatar = async (req, res) => {
   }
 
   try {
-    const streamUpload = (fileBuffer) => {
-      return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: 'avatars', resource_type: 'image' },
-          (error, result) => {
-            if (result) resolve(result);
-            else reject(error);
-          },
-        );
-        stream.end(fileBuffer);
-      });
-    };
-
-    const result = await streamUpload(req.file.buffer);
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'avatars',
+      resource_type: 'image',
+    });
 
     const updatedUser = await UsersCollection.findByIdAndUpdate(
       req.user.id,
@@ -37,8 +28,6 @@ export const updateAvatar = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-import { getUserById } from '../services/user.js';
 
 export const getCurrentUser = async (req, res) => {
   const user = req.user;
