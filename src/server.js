@@ -14,6 +14,7 @@ dotenv.config();
 
 
 export function setupServer() {
+  dotenv.config();
   const app = express();
   const PORT = getEnvVar('PORT', 3000);
 
