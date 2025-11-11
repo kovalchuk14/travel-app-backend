@@ -7,7 +7,7 @@ import { createStoryController, patchStoryController } from '../controllers/stor
 
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import {authenticate}  from '../middlewares/authenticate.js';
+// import {authenticate}  from '../middlewares/authenticate.js';
 
 import { upload } from '../middlewares/multer.js';
 import { IsValidId } from '../middlewares/IsValidId.js';
@@ -15,7 +15,7 @@ import { IsValidId } from '../middlewares/IsValidId.js';
 
 const router = Router();
 
-router.use(authenticate);
+// router.use(authenticate);
 
 router.post(
   '/',

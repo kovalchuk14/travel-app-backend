@@ -20,9 +20,9 @@ paths:
   /auth/register:
     post:
       $ref: '../swagger/paths/auth/register.yaml'
-  # /auth/login:
-    # post:
-      # $ref: '../swagger/paths/auth/login.yaml'
+  /auth/login:
+    post:
+      $ref: '../swagger/paths/auth/login.yaml'
   /auth/logout:
     post:
       $ref: '../swagger/paths/auth/logout.yaml'
