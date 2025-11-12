@@ -11,5 +11,4 @@ router.get('/me', ctrlWrapper(getCurrentUser));
 router.get('/:userId', isValidId, ctrlWrapper(getUserByIdController));
 router.get('/', ctrlWrapper(getUsersController))
 
-
 export default router;

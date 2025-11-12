@@ -9,6 +9,4 @@ router.use('/users', userRouter);
 router.use('/auth', authRouter);
 router.use('/stories', storyRouter);
 
-
-
 export default router;
