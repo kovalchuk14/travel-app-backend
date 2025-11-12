@@ -1,8 +1,10 @@
 import { UserCollection } from '../db/models/user.js';
+
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/session.js';
 
 import crypto from 'crypto';
+
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
@@ -18,7 +20,6 @@ export const createSession = async (userId) => {
     refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
   });
 };
-
 
 export const registerUser = async (payload) => {
   const user = await UserCollection.findOne({ email: payload.email });
@@ -71,4 +72,3 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
 
   return newSession;
 };
-
