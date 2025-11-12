@@ -22,7 +22,7 @@
     },
     {
       "name": "Users",
-      "description": "Users (authors, profile, saved articles)"
+      "description": "Users (authors, profile)"
     },
     {
       "name": "Stories",
@@ -273,6 +273,505 @@
           }
         }
       }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh session gor a user",
+        "operationId": "refreshUserSession",
+        "description": "Update session for a user",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successfully refreshed a session!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully refreshed a session!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get list of users",
+        "operationId": "getUsers",
+        "description": "Get list of users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 8
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found users!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found users!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "data",
+                        "page",
+                        "perPage",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/user"
+                          }
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "number",
+                          "example": 8
+                        },
+                        "totalItems": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "totalPages": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user by id",
+        "operationId": "getUserById",
+        "description": "Get user by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found user with id 65ca67e7ae7f10c88b598384!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/stories": {
+      "post": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Stories (posting, editing, filtering)",
+        "operationId": "createStory",
+        "description": "Creates a new story and returns it in the response.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "img",
+            "schema": {
+              "type": "string",
+              "format": "binary",
+              "description": "Upload the image file"
+            },
+            "required": true,
+            "description": "URL of the story image."
+          },
+          {
+            "in": "query",
+            "name": "title",
+            "schema": {
+              "type": "string",
+              "example": "Йорданія: шлях у Петру"
+            },
+            "required": true,
+            "description": "Title of the story."
+          },
+          {
+            "in": "query",
+            "name": "article",
+            "schema": {
+              "type": "string",
+              "example": "Петра — одне з нових чудес світу, і вживу воно вражає ще більше..."
+            },
+            "required": true,
+            "description": "Full text of the story article."
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string",
+              "example": "68fb50c80ae91338641121f0"
+            },
+            "required": true,
+            "description": "Category ID of the story."
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-01-10"
+            },
+            "required": true,
+            "description": "Date when the story was created."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "img",
+                  "title",
+                  "article",
+                  "category",
+                  "date"
+                ],
+                "properties": {
+                  "img": {
+                    "type": "string",
+                    "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Йорданія: шлях у Петру"
+                  },
+                  "article": {
+                    "type": "string",
+                    "example": "Петра — одне з нових чудес світу, і вживу воно вражає ще більше..."
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "68fb50c80ae91338641121f0"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-01-10"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Story successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully created a story!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "object",
+                          "properties": {
+                            "$oid": {
+                              "type": "string",
+                              "example": "68498236a100312bea079008"
+                            }
+                          }
+                        },
+                        "img": {
+                          "type": "string",
+                          "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "Йорданія: шлях у Петру"
+                        },
+                        "article": {
+                          "type": "string",
+                          "example": "Петра — одне з нових чудес світу, і вживу воно вражає ще більше..."
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "$oid": {
+                              "type": "string",
+                              "example": "68fb50c80ae91338641121f0"
+                            }
+                          }
+                        },
+                        "ownerId": {
+                          "type": "object",
+                          "properties": {
+                            "$oid": {
+                              "type": "string",
+                              "example": "6881563901add19ee16fd017"
+                            }
+                          }
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2025-01-10"
+                        },
+                        "favoriteCount": {
+                          "type": "integer",
+                          "example": 4
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/stories/{storiesId}": {
+      "patch": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Update story travel",
+        "operationId": "patchStory",
+        "description": "Update story.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "storiesId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the story to update"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "img": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Upload the image file"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the story.",
+                    "example": "Йорданія: шлях у Петру"
+                  },
+                  "article": {
+                    "type": "string",
+                    "description": "Full text of the story article.",
+                    "example": "Петра — одне з нових чудес світу, i вживу воно вражає ще більше..."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Category ID of the story.",
+                    "example": "68fb50c80ae91338641121f0"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date when the story was created.",
+                    "example": "2025-01-10"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully patched a story",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched a story!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/storySchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -342,6 +841,104 @@
             }
           }
         }
+      },
+      "user": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name",
+          "avatarUrl",
+          "description"
+        ],
+        "properties": {
+          "_id": {
+            "description": "User's id",
+            "type": "string",
+            "example": "65e4decdd286b30065d54af9"
+          },
+          "name": {
+            "description": "User's name",
+            "type": "string",
+            "example": "Дмитро"
+          },
+          "avatarUrl": {
+            "description": "Link to user's photo",
+            "type": "string",
+            "example": "https://res.cloudinary.com/uqwgdu/image/upload/image.png"
+          },
+          "articlesAmount": {
+            "description": "The number of user articles",
+            "type": "number",
+            "example": 9
+          },
+          "description": {
+            "description": "User's description of themselves",
+            "type": "string",
+            "example": "Привіт! Я Дмитро. Люблю знаходити приховані перлини у кожній поїздці та ділитися ними. Світ повний дивовижних відкриттів!"
+          },
+          "favorites": {
+            "description": "User-selected articles",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Article id",
+              "example": "65e4decdd286b30065d54af9"
+            }
+          }
+        }
+      },
+      "storySchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "HTTP status code",
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "description": "Server response message",
+            "type": "string",
+            "example": "Successfully registered a user!"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "img",
+              "title",
+              "article",
+              "category",
+              "favoriteCount",
+              "date"
+            ],
+            "properties": {
+              "img": {
+                "type": "string",
+                "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp"
+              },
+              "title": {
+                "type": "string",
+                "example": "Йорданія: шлях у Петру"
+              },
+              "article": {
+                "type": "string",
+                "example": "Петра — одне з нових чудес світу, i вживу воно вражає ще більше..."
+              },
+              "category": {
+                "type": "string",
+                "example": "68fb50c80ae91338641121f0"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "example": "2025-01-10"
+              },
+              "favoriteCount": {
+                "type": "integer",
+                "example": 4
+              }
+            }
+          }
+        }
       }
     },
     "responses": {
@@ -373,6 +970,30 @@
                       "example": "Bad Request"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Unauthorized Error"
                 }
               }
             }

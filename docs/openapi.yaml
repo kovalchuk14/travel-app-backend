@@ -10,7 +10,7 @@ tags:
   - name: Auth
     description: User registration, login, logout
   - name: Users
-    description: Users (authors, profile, saved articles)
+    description: Users (authors, profile)
   - name: Stories
     description: Stories (posting, editing, filtering)
 servers:
@@ -26,10 +26,21 @@ paths:
   /auth/logout:
     post:
       $ref: '../swagger/paths/auth/logout.yaml'
-  # /auth/refresh:
-  #   post:
-  #     $ref: '../swagger/paths/auth/refresh.yaml'
-
+  /auth/refresh:
+    post:
+      $ref: '../swagger/paths/auth/refresh.yaml'
+  /users/me:
+    get:
+      $ref: '../swagger/paths/users/get.yaml'
+  /users/{userId}:
+    get:
+      $ref: '../swagger/paths/users/{id}/get.yaml'
+  /stories:
+    post:
+      $ref: '../swagger/paths/stories/post.yaml'
+  /stories/{storiesId}:
+    patch:
+      $ref: '../swagger/paths/stories/{storiesId}/patch.yaml'
 components:
   securitySchemes:
     bearerAuth:
