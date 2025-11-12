@@ -1,0 +1,34 @@
+type: object
+required:
+  - _id
+  - name
+  - avatarUrl
+  - description
+properties:
+  _id:
+    description: "User's id"
+    type: string
+    example: '65e4decdd286b30065d54af9'
+  name:
+    description: "User's name"
+    type: string
+    example: 'John Doe'
+  avatarUrl:
+    description: "Link to user's photo"
+    type: string
+    example: https://res.cloudinary.com/uqwgdu/image/upload/image.png
+  articlesAmount:
+    description: 'The number of user articles'
+    type: number
+    example: 9
+  description:
+    description: "User's description of themselves"
+    type: string
+    example: 'Привіт! Я Дмитро. Люблю знаходити приховані перлини у кожній поїздці та ділитися ними. Світ повний дивовижних відкриттів!'
+  favorites:
+    description: 'User-selected articles'
+    type: array
+    items:
+      type: string
+      description: 'Article id'
+      example: '65e4decdd286b30065d54af9'

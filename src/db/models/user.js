@@ -8,7 +8,7 @@ const usersSchema = new Schema(
     avatarUrl: { type: String, default: '' },
     articlesAmount: { type: Number, default: 0 },
     description: { type: String, default: '' },
-    savedArticles: [{ type: Schema.Types.ObjectId, ref: 'travellers' }],
+    savedArticles: [{ type: Schema.Types.ObjectId, ref: 'stories' }],
   },
   { timestamps: true, versionKey: false },
 );
