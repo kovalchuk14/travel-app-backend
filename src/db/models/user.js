@@ -1,13 +1,15 @@
-import mongoose, { model } from 'mongoose';
-const userSchema = new mongoose.Schema(
+import { model, Schema } from 'mongoose';
+
+const userSchema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     avatarUrl: { type: String, default: '' },
-    avatarPublicId: { type: String }, //
+    avatarPublicId: { type: String },
     articlesAmount: { type: Number, default: 0 },
     description: { type: String, default: '' },
+    savedArticles: [{ type: Schema.Types.ObjectId, ref: 'stories' }],
   },
   { timestamps: true },
 );

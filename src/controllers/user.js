@@ -2,6 +2,8 @@ import createHttpError from 'http-errors';
 import cloudinary from '../utils/cloudinary.js';
 import { UsersCollection } from '../db/models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getUserById, getAllUsers } from '../services/users.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 export const updateAvatar = async (req, res, next) => {
   try {
@@ -65,5 +67,20 @@ export const getUserByIdController = async (req, res) => {
     status: 200,
     message: `Successfully found user with id ${userId}!`,
     data: user,
+  });
+};
+
+export const getUsersController = async (req, res) => {
+  const { page, perPage } = parsePaginationParams(req.query);
+
+  const users = await getAllUsers({
+    page,
+    perPage,
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found users!',
+    data: users,
   });
 };
