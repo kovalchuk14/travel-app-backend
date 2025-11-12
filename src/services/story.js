@@ -6,19 +6,13 @@ export const createStory = async (payload) => {
 };
 
 export const patchStory = async (payload) => {
-    const { storyId, ...updateFields } = payload;
-    const rawResult = await storiesCollection.findOneAndUpdate(
-        {
-            _id: storyId,
-            userId: payload.userId,
-        },
+    const { storyId, userId, ...updateFields } = payload;
+
+    const updatedStory = await storiesCollection.findOneAndUpdate(
+        { _id: storyId, ownerId: userId },
         updateFields,
-        {
-            new: true,
-        }
+        { new: true }
     );
 
-    if (!rawResult || !rawResult.value) return null;
-
-    return rawResult.value;
-}
+    return updatedStory;
+};
