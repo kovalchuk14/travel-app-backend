@@ -1,5 +1,4 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import pino from "pino-http";
 import cookieParser from "cookie-parser";
@@ -9,19 +8,19 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { swaggerDocs } from  './middlewares/swaggerDocs.js'
 import { UPLOAD_DIR } from './constants/index.js';
-dotenv.config();
 
 
 
 export function setupServer() {
-  dotenv.config();
   const app = express();
   const PORT = getEnvVar('PORT', 3000);
 
-  app.use(express.json({
-    type: ['application/json', 'application/vnd.api+json'],
-    limit: '100kb',
-  }),);
+  app.use(
+    express.json({
+      type: ['application/json', 'application/vnd.api+json'],
+      limit: '100kb',
+    }),
+  );
 
   app.use(cors());
   app.use(cookieParser());
@@ -42,7 +41,6 @@ export function setupServer() {
   app.use(notFoundHandler);
 
   app.use(errorHandler);
-
 
   app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);

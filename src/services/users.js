@@ -1,4 +1,4 @@
-import {UserCollection } from '../db/models/users.js';
+import {UserCollection } from '../db/models/user.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 
@@ -27,7 +27,7 @@ export const getAllUsers = async ({
 
 
 export const getUserById = async (userId) => {
-    const user = await UserCollection.findById(userId).populate('favorites');
+    const user = await UserCollection.findById(userId).populate('savedArticles');
 
     return user;
 }
