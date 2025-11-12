@@ -10,5 +10,4 @@ router.use(authenticate);
 router.get('/me', ctrlWrapper(getCurrentUser));
 router.get('/:userId', isValidId, ctrlWrapper(getUserByIdController));
 
-
 export default router;

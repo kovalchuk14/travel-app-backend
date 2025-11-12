@@ -1,6 +1,6 @@
-import { model, Schema } from 'mongoose';
+import mongoose, { model } from 'mongoose';
 
-const usersSchema = new Schema(
+const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -8,14 +8,14 @@ const usersSchema = new Schema(
     avatarUrl: { type: String, default: '' },
     articlesAmount: { type: Number, default: 0 },
     description: { type: String, default: '' },
-    savedArticles: [{ type: Schema.Types.ObjectId, ref: 'stories' }],
   },
-  { timestamps: true, versionKey: false },
+  { timestamps: true },
 );
 
-usersSchema.methods.toJSON = function () {
+userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   return obj;
 };
-export const UsersCollection = model('User', usersSchema);
+
+export const User = model('User', userSchema);
