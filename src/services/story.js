@@ -27,7 +27,7 @@ export const getAllStories = async ({
   }
 
   const [storiesCount, stories] = await Promise.all([
-    storiesCollection.find().merge(storiesQuery).countDocuments(),
+    storiesCollection.countDocuments(storiesQuery.getQuery()),
     storiesQuery.skip(skip).limit(limit).sort({ favoriteCount: -1 }).exec(),
   ]);
 
