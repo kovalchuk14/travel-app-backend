@@ -1,4 +1,4 @@
-import {UserCollection } from '../db/models/users.js';
+import {UserCollection } from '../db/models/user.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 

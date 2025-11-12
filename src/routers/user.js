@@ -2,7 +2,7 @@ import { authenticate } from '../middlewares/authenticate.js';
 import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { getCurrentUser, getUserByIdController,getUsersController } from '../controllers/user.js';
-import { isValidId } from '../middlewares/isValidId.js';
+import { isValidId } from '../middlewares/isValidUserId.js';
 
 const router = Router();
 

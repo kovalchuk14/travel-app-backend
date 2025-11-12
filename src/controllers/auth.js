@@ -1,22 +1,21 @@
 import { registerUser, loginUser, logoutUser, createSession} from '../services/auth.js';
-import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/session.js';
 import { refreshUsersSession } from '../services/auth.js';
 
 const setupSession = (res, session) => {
   res.cookie('accessToken', session.accessToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + FIFTEEN_MINUTES),
+    expires: session.accessTokenValidUntil,
   });
 
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAYS),
+    expires: session.refreshTokenValidUntil,
   });
 
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAYS),
+    expires: session.refreshTokenValidUntil,
   });
 };
 
@@ -47,9 +46,12 @@ export const loginUserController = async (req, res) => {
 
 
 export const logoutUserController = async (req, res) => {
-  if(req.cookies.sessionId){
-    await logoutUser(req.cookies.sessionId);
+  const sessionId = req.cookies.sessionId;
+  if (!sessionId) {
+    return res.status(400).json({ message: 'No session to logout' });
   }
+
+  await logoutUser(sessionId);
 
   res.clearCookie('accessToken');
   res.clearCookie('refreshToken');
