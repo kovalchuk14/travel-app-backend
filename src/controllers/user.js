@@ -1,31 +1,45 @@
+import createHttpError from 'http-errors';
 import cloudinary from '../utils/cloudinary.js';
 import { UsersCollection } from '../db/models/user.js';
-import { getUserById } from '../services/user.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
-export const updateAvatar = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-
+export const updateAvatar = async (req, res, next) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'avatars',
-      resource_type: 'image',
-    });
+    if (!req.user?._id) {
+      throw createHttpError(401, 'User not authenticated');
+    }
 
-    const updatedUser = await UsersCollection.findByIdAndUpdate(
-      req.user.id,
-      { avatarUrl: result.secure_url },
-      { new: true },
-    );
+    const user = await UsersCollection.findById(req.user._id);
+    if (!user) {
+      throw createHttpError(404, 'User not found');
+    }
+
+    if (!req.file) {
+      throw createHttpError(400, 'No file uploaded');
+    }
+
+    // Видаляємо старий аватар, якщо існує
+    if (user.avatarPublicId) {
+      await cloudinary.uploader.destroy(user.avatarPublicId, {
+        resource_type: 'image',
+      });
+    }
+
+    // Завантажуємо новий аватар
+    const uploaded = await saveFileToCloudinary(req.file, 'avatars');
+
+    // Оновлюємо користувача в базі
+    user.avatarUrl = uploaded.secureUrl;
+    user.avatarPublicId = uploaded.publicId;
+    await user.save();
 
     res.status(200).json({
       status: 200,
       message: 'Avatar updated successfully',
-      data: updatedUser,
+      data: user,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
