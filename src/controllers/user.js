@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
-import { UsersCollection } from '../db/models/user.js';
+import User from '../db/models/user.js';
 import { getUserById, getAllUsers } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
@@ -32,10 +32,7 @@ export const getUserByIdController = async (req, res) => {
 export const getUsersController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
 
-  const users = await getAllUsers({
-    page,
-    perPage,
-  });
+  const users = await getAllUsers({ page, perPage });
 
   res.status(200).json({
     status: 200,
@@ -55,7 +52,7 @@ export const updateUser = async (req, res) => {
   const updates = {};
 
   if (email) {
-    const existingUser = await UsersCollection.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser && existingUser._id.toString() !== userId.toString()) {
       throw createHttpError(409, 'Email already in use');
     }
@@ -76,7 +73,7 @@ export const updateUser = async (req, res) => {
     updates.name = name.trim();
   }
 
-  const updatedUser = await UsersCollection.findByIdAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     userId,
     { $set: updates },
     { new: true },
@@ -86,8 +83,5 @@ export const updateUser = async (req, res) => {
     throw createHttpError(404, 'User not found');
   }
 
-  const safeUser = updatedUser.toObject();
-  delete safeUser.password;
-
-  res.status(200).json(safeUser);
+  res.status(200).json(updatedUser);
 };
