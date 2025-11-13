@@ -73,7 +73,7 @@ export const createStoryController = async (req, res) => {
   let imageUrl;
   if (storyImage) {
     if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-      imageUrl = await saveFileToCloudinary(storyImage);
+      imageUrl = (await saveFileToCloudinary(storyImage)).secureUrl;
     } else {
       imageUrl = await saveFileToUploadDir(storyImage);
     }
@@ -106,7 +106,7 @@ export const patchStoryController = async (req, res, next) => {
 
     if (storyImage) {
         if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-            imageUrl = await saveFileToCloudinary(storyImage);
+            imageUrl = (await saveFileToCloudinary(storyImage)).secureUrl;
         } else {
             imageUrl = await saveFileToUploadDir(storyImage);
         }

@@ -1,6 +1,5 @@
 import createHttpError from 'http-errors';
 import cloudinary from '../utils/cloudinary.js';
-import { UsersCollection } from '../db/models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { getUserById, getAllUsers } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
@@ -13,7 +12,7 @@ export const updateAvatar = async (req, res, next) => {
       throw createHttpError(401, 'User not authenticated');
     }
 
-    const user = await UsersCollection.findById(req.user._id);
+    const user = await UserCollection.findById(req.user._id);
     if (!user) {
       throw createHttpError(404, 'User not found');
     }
