@@ -1,6 +1,6 @@
 import { getUserById, getAllUsers } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
-import { UsersCollection } from '../db/models/user.js';
+import { UserCollection } from '../db/models/user.js';
 import { storiesCollection } from '../db/models/story.js';
 
 // Додати статтю у savedArticles
@@ -10,7 +10,7 @@ export const addSavedArticle = async (req, res) => {
 
   try {
     // Атомарне додавання статті в savedArticles
-    const user = await UsersCollection.findByIdAndUpdate(
+    const user = await UserCollection.findByIdAndUpdate(
       userId,
       { $addToSet: { savedArticles: articleId } }, // додає тільки якщо немає
       { new: true } // повертає оновлений документ
@@ -44,7 +44,7 @@ export const removeSavedArticle = async (req, res) => {
 
   try {
     // Атомарне видалення статті з savedArticles
-    const user = await UsersCollection.findByIdAndUpdate(
+    const user = await UserCollection.findByIdAndUpdate(
       userId,
       { $pull: { savedArticles: articleId } }, // видаляє, якщо є
       { new: true }
