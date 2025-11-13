@@ -1,7 +1,51 @@
+import createHttpError from 'http-errors';
+import cloudinary from '../utils/cloudinary.js';
+import { UsersCollection } from '../db/models/user.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import { getUserById, getAllUsers } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { UserCollection } from '../db/models/user.js';
 import { storiesCollection } from '../db/models/story.js';
+
+export const updateAvatar = async (req, res, next) => {
+  try {
+    if (!req.user?._id) {
+      throw createHttpError(401, 'User not authenticated');
+    }
+
+    const user = await UsersCollection.findById(req.user._id);
+    if (!user) {
+      throw createHttpError(404, 'User not found');
+    }
+
+    if (!req.file) {
+      throw createHttpError(400, 'No file uploaded');
+    }
+
+    // Видаляємо старий аватар, якщо існує
+    if (user.avatarPublicId) {
+      await cloudinary.uploader.destroy(user.avatarPublicId, {
+        resource_type: 'image',
+      });
+    }
+
+    // Завантажуємо новий аватар
+    const uploaded = await saveFileToCloudinary(req.file, 'avatars');
+
+    // Оновлюємо користувача в базі
+    user.avatarUrl = uploaded.secureUrl;
+    user.avatarPublicId = uploaded.publicId;
+    await user.save();
+
+    res.status(200).json({
+      status: 200,
+      message: 'Avatar updated successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Додати статтю у savedArticles
 export const addSavedArticle = async (req, res) => {
@@ -78,6 +122,7 @@ export const removeSavedArticle = async (req, res) => {
 };
 
 // By Yevhenii Fedorchenko
+
 
 export const getCurrentUser = async (req, res) => {
   const user = req.user;
