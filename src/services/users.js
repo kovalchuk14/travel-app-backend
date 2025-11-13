@@ -27,7 +27,7 @@ export const getAllUsers = async ({
 
 
 export const getUserById = async (userId) => {
-    const user = await UserCollection.findById(userId).populate('favorites');
+    const user = await UserCollection.findById(userId).populate('savedArticles');
 
     return user;
 }
