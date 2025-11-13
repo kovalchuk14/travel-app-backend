@@ -8,6 +8,7 @@ const storiesSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: 'Category' },
     ownerId: { type: Schema.Types.ObjectId, ref: 'User' },
     date: { type: String, required: true },
+
     favoriteCount: { type: Number, default: 0 },
   },
   { timestamps: true, versionKey: false },

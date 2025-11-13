@@ -97,7 +97,7 @@ export const getUserByIdController = async (req, res) => {
       message: 'User not found',
     });
   }
-  res.json({
+  res.status(200).json({
     status: 200,
     message: `Successfully found user with id ${userId}!`,
     data: user,
