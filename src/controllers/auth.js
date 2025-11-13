@@ -1,4 +1,9 @@
-import { registerUser, loginUser, logoutUser, createSession} from '../services/auth.js';
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  createSession,
+} from '../services/auth.js';
 import { SessionsCollection } from '../db/models/session.js';
 import { refreshUsersSession } from '../services/auth.js';
 
@@ -18,7 +23,6 @@ const setupSession = (res, session) => {
     expires: session.refreshTokenValidUntil,
   });
 };
-
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -43,7 +47,6 @@ export const loginUserController = async (req, res) => {
     data: user,
   });
 };
-
 
 export const logoutUserController = async (req, res) => {
   const sessionId = req.cookies.sessionId;

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
-import User from '../db/models/user.js';
+import { UserCollection } from '../db/models/user.js';
 import { getUserById, getAllUsers } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
@@ -52,7 +52,7 @@ export const updateUser = async (req, res) => {
   const updates = {};
 
   if (email) {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await UserCollection.findOne({ email });
     if (existingUser && existingUser._id.toString() !== userId.toString()) {
       throw createHttpError(409, 'Email already in use');
     }
@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
     updates.name = name.trim();
   }
 
-  const updatedUser = await User.findByIdAndUpdate(
+  const updatedUser = await UserCollection.findByIdAndUpdate(
     userId,
     { $set: updates },
     { new: true },
