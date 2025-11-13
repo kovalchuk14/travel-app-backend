@@ -1,13 +1,13 @@
 tags:
   - Users
 summary: Get user by id
-operationId: getUsers
+operationId: getUserById
 description: 'Get user by id'
 security:
   - bearerAuth: []
 parameters:
   - in: path
-    name: id
+    name: userId
     required: true
     schema:
       type: string

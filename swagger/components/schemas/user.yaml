@@ -12,7 +12,7 @@ properties:
   name:
     description: "User's name"
     type: string
-    example: 'John Doe'
+    example: 'Дмитро'
   avatarUrl:
     description: "Link to user's photo"
     type: string
