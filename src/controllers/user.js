@@ -17,15 +17,14 @@ export const updateUser = async (req, res) => {
     if (existingUser && existingUser._id.toString() !== userId.toString()) {
       throw createHttpError(409, 'Email already in use');
     }
-    updates.email = email;
+    updates.email = email.trim();
   }
 
   if (password) {
     if (password.length < 6) {
       throw createHttpError(400, 'Password must be at least 6 characters long');
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    updates.password = hashedPassword;
+    updates.password = await bcrypt.hash(password, 10);
   }
 
   if (name) {
@@ -40,6 +39,10 @@ export const updateUser = async (req, res) => {
     { $set: updates },
     { new: true },
   );
+
+  if (!updatedUser) {
+    throw createHttpError(404, 'User not found');
+  }
 
   const safeUser = updatedUser.toObject();
   delete safeUser.password;
