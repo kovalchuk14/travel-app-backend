@@ -9,7 +9,7 @@ const userSchema = new Schema(
     avatarPublicId: { type: String },
     articlesAmount: { type: Number, default: 0 },
     description: { type: String, default: '' },
-    savedArticles: [{ type: Schema.Types.ObjectId, ref: 'stories' }],
+    savedArticles: [{ type: Schema.Types.ObjectId, ref: 'Story' }],
   },
   { timestamps: true },
 );

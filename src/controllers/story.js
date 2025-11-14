@@ -2,7 +2,7 @@ import createHttpError from 'http-errors';
 import { isValidObjectId } from 'mongoose';
 
 import { getEnvVar } from '../utils/getEnvVar.js';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import cloudinary from '../utils/cloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 import {
@@ -73,7 +73,8 @@ export const createStoryController = async (req, res) => {
   let imageUrl;
   if (storyImage) {
     if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-      imageUrl = (await saveFileToCloudinary(storyImage)).secureUrl;
+      const uploaded = await cloudinary.uploadFile(storyImage, 'stories');
+      imageUrl = uploaded.secureUrl;
     } else {
       imageUrl = await saveFileToUploadDir(storyImage);
     }
@@ -95,39 +96,40 @@ export const createStoryController = async (req, res) => {
 };
 
 export const patchStoryController = async (req, res, next) => {
-    const { storyId } = req.params;
+  const { storyId } = req.params;
 
-    if (!req.user || !req.user._id) {
-        throw createHttpError(401, 'User not authenticated');
+  if (!req.user || !req.user._id) {
+    throw createHttpError(401, 'User not authenticated');
+  }
+
+  const storyImage = req.file;
+  let imageUrl;
+
+  if (storyImage) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      const uploaded = await cloudinary.uploadFile(storyImage, 'stories');
+      imageUrl = uploaded.secureUrl;
+    } else {
+      imageUrl = await saveFileToUploadDir(storyImage);
     }
+  }
 
-    const storyImage = req.file;
-    let imageUrl;
+  const payload = {
+    storyId,
+    userId: req.user._id,
+    ...req.body,
+    ...(imageUrl && { storyImage: imageUrl }),
+  };
 
-    if (storyImage) {
-        if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-            imageUrl = (await saveFileToCloudinary(storyImage)).secureUrl;
-        } else {
-            imageUrl = await saveFileToUploadDir(storyImage);
-        }
-    }
+  const updatedStory = await patchStory(payload);
 
-    const payload = {
-        storyId,
-        userId: req.user._id,
-        ...req.body,
-        ...(imageUrl && { storyImage: imageUrl }),
-    };
+  if (!updatedStory) {
+    return next(createHttpError(404, "Story not found or you don't have permission"));
+  }
 
-    const updatedStory = await patchStory(payload);
-
-    if (!updatedStory) {
-        return next(createHttpError(404, "Story not found or you don't have permission"));
-    }
-
-    res.status(200).json({
-        status: 200,
-        message: 'Successfully updated the story!',
-        data: updatedStory,
-    });
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully updated the story!',
+    data: updatedStory,
+  });
 };

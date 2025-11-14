@@ -1,7 +1,6 @@
 import createHttpError from 'http-errors';
 import cloudinary from '../utils/cloudinary.js';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { getUserById, getAllUsers } from '../services/users.js';
+import { getUserById, getAllUsers, patchUserService } from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { UserCollection } from '../db/models/user.js';
 import { storiesCollection } from '../db/models/story.js';
@@ -23,13 +22,11 @@ export const updateAvatar = async (req, res, next) => {
 
     // Видаляємо старий аватар, якщо існує
     if (user.avatarPublicId) {
-      await cloudinary.uploader.destroy(user.avatarPublicId, {
-        resource_type: 'image',
-      });
+      await cloudinary.deleteFile(user.avatarPublicId);
     }
 
     // Завантажуємо новий аватар
-    const uploaded = await saveFileToCloudinary(req.file, 'avatars');
+    const uploaded = await cloudinary.uploadFile(req.file, 'avatars');
 
     // Оновлюємо користувача в базі
     user.avatarUrl = uploaded.secureUrl;
@@ -162,3 +159,16 @@ export const getUsersController = async (req, res) => {
     data: users,
   });
 };
+
+export const patchUserController = async (req, res) => {
+  const userId = req.user._id;
+  const updatesData = req.body;
+
+  const updatedUser = await patchUserService(userId, updatesData);
+
+  res.status(200).json({
+    status: 200,
+    message: "User updated successfully",
+    data: updatedUser,
+  });
+}
