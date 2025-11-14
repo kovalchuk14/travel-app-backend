@@ -1,8 +1,127 @@
-import bcrypt from 'bcryptjs';
 import createHttpError from 'http-errors';
-import { UserCollection } from '../db/models/user.js';
-import { getUserById, getAllUsers } from '../services/users.js';
+import cloudinary from '../utils/cloudinary.js';
+import {
+  getUserById,
+  getAllUsers,
+  patchUserService,
+} from '../services/users.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { UserCollection } from '../db/models/user.js';
+import { storiesCollection } from '../db/models/story.js';
+
+export const updateAvatar = async (req, res, next) => {
+  try {
+    if (!req.user?._id) {
+      throw createHttpError(401, 'User not authenticated');
+    }
+
+    const user = await UserCollection.findById(req.user._id);
+    if (!user) {
+      throw createHttpError(404, 'User not found');
+    }
+
+    if (!req.file) {
+      throw createHttpError(400, 'No file uploaded');
+    }
+
+    // Видаляємо старий аватар, якщо існує
+    if (user.avatarPublicId) {
+      await cloudinary.deleteFile(user.avatarPublicId);
+    }
+
+    // Завантажуємо новий аватар
+    const uploaded = await cloudinary.uploadFile(req.file, 'avatars');
+
+    // Оновлюємо користувача в базі
+    user.avatarUrl = uploaded.secureUrl;
+    user.avatarPublicId = uploaded.publicId;
+    await user.save();
+
+    res.status(200).json({
+      status: 200,
+      message: 'Avatar updated successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Додати статтю у savedArticles
+export const addSavedArticle = async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.user._id;
+
+  try {
+    // Атомарне додавання статті в savedArticles
+    const user = await UserCollection.findByIdAndUpdate(
+      userId,
+      { $addToSet: { savedArticles: articleId } }, // додає тільки якщо немає
+      { new: true }, // повертає оновлений документ
+    );
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Атомарне збільшення favoriteCount у статті
+    const article = await storiesCollection.findByIdAndUpdate(
+      articleId,
+      { $inc: { favoriteCount: 1 } },
+      { new: true },
+    );
+
+    if (!article) return res.status(404).json({ message: 'Article not found' });
+
+    res.status(200).json({
+      message: 'Article added to saved list',
+      savedArticles: user.savedArticles,
+      favoriteCount: article.favoriteCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Видалити статтю з savedArticles
+export const removeSavedArticle = async (req, res) => {
+  const { articleId } = req.params;
+  const userId = req.user._id;
+
+  try {
+    // Атомарне видалення статті з savedArticles
+    const user = await UserCollection.findByIdAndUpdate(
+      userId,
+      { $pull: { savedArticles: articleId } }, // видаляє, якщо є
+      { new: true },
+    );
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Атомарне зменшення favoriteCount у статті, не менше 0
+    const article = await storiesCollection.findByIdAndUpdate(
+      articleId,
+      { $inc: { favoriteCount: -1 } },
+      { new: true },
+    );
+
+    if (!article) return res.status(404).json({ message: 'Article not found' });
+
+    // Мінімальне обмеження favoriteCount
+    if (article.favoriteCount < 0) {
+      article.favoriteCount = 0;
+      await article.save();
+    }
+
+    res.status(200).json({
+      message: 'Article removed from saved list',
+      savedArticles: user.savedArticles,
+      favoriteCount: article.favoriteCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// By Yevhenii Fedorchenko
 
 export const getCurrentUser = async (req, res) => {
   const user = req.user;
@@ -41,47 +160,15 @@ export const getUsersController = async (req, res) => {
   });
 };
 
-export const updateUser = async (req, res) => {
+export const patchUserController = async (req, res) => {
   const userId = req.user._id;
-  const { name, email, password } = req.body;
+  const updatesData = req.body;
 
-  if (!name && !email && !password) {
-    throw createHttpError(400, 'No fields provided for update');
-  }
+  const updatedUser = await patchUserService(userId, updatesData);
 
-  const updates = {};
-
-  if (email) {
-    const existingUser = await UserCollection.findOne({ email });
-    if (existingUser && existingUser._id.toString() !== userId.toString()) {
-      throw createHttpError(409, 'Email already in use');
-    }
-    updates.email = email.trim();
-  }
-
-  if (password) {
-    if (password.length < 6) {
-      throw createHttpError(400, 'Password must be at least 6 characters long');
-    }
-    updates.password = await bcrypt.hash(password, 10);
-  }
-
-  if (name) {
-    if (name.trim().length < 2) {
-      throw createHttpError(400, 'Name must be at least 2 characters long');
-    }
-    updates.name = name.trim();
-  }
-
-  const updatedUser = await UserCollection.findByIdAndUpdate(
-    userId,
-    { $set: updates },
-    { new: true },
-  );
-
-  if (!updatedUser) {
-    throw createHttpError(404, 'User not found');
-  }
-
-  res.status(200).json(updatedUser);
+  res.status(200).json({
+    status: 200,
+    message: 'User updated successfully',
+    data: updatedUser,
+  });
 };

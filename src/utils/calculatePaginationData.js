@@ -6,7 +6,7 @@ export const calculatePaginationData = (count, perPage, page) => {
   const hasPreviousPage = page !== 1;
 
   if (count === 0) {
-    throw createHttpError(404, 'Contacts not found');
+    throw createHttpError(404, 'Items not found');
   }
 
   if (page > totalPages) {
