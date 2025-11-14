@@ -7,7 +7,6 @@ import {
   getCurrentUser,
   getUserByIdController,
   getUsersController,
-  //updateUser,
   updateAvatar,
 } from '../controllers/user.js';
 
@@ -49,7 +48,11 @@ router.get('/', ctrlWrapper(getUsersController));
 
 router.get('/me', ctrlWrapper(getCurrentUser));
 
-//router.patch('/me', validateBody(updateUserSchema), ctrlWrapper(updateUser));
+router.patch(
+  '/me',
+  validateBody(patchUserSchema),
+  ctrlWrapper(patchUserController),
+);
 
 router.patch('/avatar', upload.single('avatar'), ctrlWrapper(updateAvatar));
 
