@@ -11,12 +11,13 @@ const userSchema = new Schema(
     description: { type: String, default: '' },
     savedArticles: [{ type: Schema.Types.ObjectId, ref: 'Story' }],
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
+
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   return obj;
 };
-export const UserCollection = model('User', userSchema);
 
+export const UserCollection = model('User', userSchema);
