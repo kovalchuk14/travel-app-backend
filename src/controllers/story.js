@@ -10,6 +10,7 @@ import {
   getStoryById,
   createStory,
   patchStory,
+  deleteStory,
 } from '../services/story.js';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
@@ -27,7 +28,7 @@ export const getAllStoriesController = async (req, res) => {
 
   if (req.query.mine === 'true' && req.user?._id) {
     stories = await getAllStories({
-      userId: req.user._id,
+      ownerId: req.user._id,
       filter,
       page,
       perPage,
@@ -82,8 +83,9 @@ export const createStoryController = async (req, res) => {
 
   const payload = {
     ...req.body,
-    storyImage: imageUrl,
-    userId: req.user._id,
+    img: imageUrl,
+    ownerId: req.user._id,
+    date: Date.now(),
   };
 
   const story = await createStory(payload);
@@ -116,7 +118,7 @@ export const patchStoryController = async (req, res, next) => {
 
   const payload = {
     storyId,
-    userId: req.user._id,
+    ownerId: req.user._id,
     ...req.body,
     ...(imageUrl && { storyImage: imageUrl }),
   };
@@ -133,3 +135,14 @@ export const patchStoryController = async (req, res, next) => {
     data: updatedStory,
   });
 };
+
+export const deleteStoryController = async (req, res, next) => {
+  const { storyId } = req.params;
+  const result = await deleteStory(storyId, req.user._id);
+    if (!result) {
+        next(createHttpError(404, "Story not found or you don`t have permission"));
+        return;
+    }
+
+    res.status(204).end();
+}

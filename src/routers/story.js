@@ -7,6 +7,7 @@ import {
   getStoryByIdController,
   createStoryController,
   patchStoryController,
+  deleteStoryController,
 } from '../controllers/story.js';
 import { createStorySchema, updateStorySchema } from '../validation/stories.js';
 
@@ -22,7 +23,6 @@ const router = Router();
 
 router.get('/', authenticateOptional, ctrlWrapper(getAllStoriesController));
 
-router.get('/:storyId', ctrlWrapper(getStoryByIdController));
 
 router.post(
   '/',
@@ -32,6 +32,8 @@ router.post(
   ctrlWrapper(createStoryController),
 );
 
+router.get('/:storyId', ctrlWrapper(getStoryByIdController));
+
 router.patch(
   '/:storyId',
   authenticate,
@@ -39,6 +41,12 @@ router.patch(
   upload.single('storyImage'),
   validateBody(updateStorySchema),
   ctrlWrapper(patchStoryController),
+);
+
+router.delete('/:storyId',
+  authenticate,
+  isValidId,
+  ctrlWrapper(deleteStoryController),
 );
 
 export default router;
