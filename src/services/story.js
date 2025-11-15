@@ -7,7 +7,7 @@ export const createStory = async (payload) => {
 };
 
 export const getAllStories = async ({
-  userId,
+  ownerId,
   filter = {},
   page = 1,
   perPage = 9,
@@ -15,12 +15,12 @@ export const getAllStories = async ({
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const userFilter = userId ? { userId } : {};
+  const userFilter = ownerId ? { ownerId } : {};
 
   const storiesQuery = storiesCollection
     .find(userFilter)
     .populate('category', 'name')
-    .populate('userId', 'name avatarUrl');
+    .populate('ownerId', 'name avatarUrl');
 
   if (filter.category) {
     storiesQuery.where('category').equals(filter.category);
@@ -43,7 +43,7 @@ export const getStoryById = async (storyId) => {
   const story = await storiesCollection
     .findById(storyId)
     .populate('category')
-    .populate('userId', 'name avatarUrl');
+    .populate('ownerId', 'name avatarUrl');
   return story;
 };
 
@@ -60,3 +60,13 @@ export const patchStory = async (payload) => {
     return updatedStory;
 
 };
+
+
+export const deleteStory = async (storyId,userId) => {
+    const story = await storiesCollection.findOneAndDelete({
+        _id: storyId,
+        ownerId: userId,
+    });
+
+    return story;
+}

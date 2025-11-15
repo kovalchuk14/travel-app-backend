@@ -50,22 +50,25 @@ export const addSavedArticle = async (req, res) => {
 
   try {
     // Атомарне додавання статті в savedArticles
-    const user = await UserCollection.findByIdAndUpdate(
-      userId,
-      { $addToSet: { savedArticles: articleId } }, // додає тільки якщо немає
-      { new: true } // повертає оновлений документ
-    );
+
+    const user = await UserCollection.findById(userId);
 
     if (!user) return res.status(404).json({ message: 'User not found' });
+    const alreadySaved = user.savedArticles.includes(articleId);
+    if (alreadySaved) {
+      return res.status(200).json({
+        message: 'Article already in saved list',
+        savedArticles: user.savedArticles,
+      });
+    }
+    user.savedArticles.push(articleId);
+    await user.save();
 
-    // Атомарне збільшення favoriteCount у статті
-    const article = await storiesCollection.findByIdAndUpdate(
-      articleId,
-      { $inc: { favoriteCount: 1 } },
-      { new: true }
-    );
-
+    const article = await storiesCollection.findById(articleId);
     if (!article) return res.status(404).json({ message: 'Article not found' });
+
+    article.favoriteCount += 1;
+    await article.save();
 
     res.status(200).json({
       message: 'Article added to saved list',
@@ -83,29 +86,25 @@ export const removeSavedArticle = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    // Атомарне видалення статті з savedArticles
-    const user = await UserCollection.findByIdAndUpdate(
-      userId,
-      { $pull: { savedArticles: articleId } }, // видаляє, якщо є
-      { new: true }
-    );
-
+    const user = await UserCollection.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Атомарне зменшення favoriteCount у статті, не менше 0
-    const article = await storiesCollection.findByIdAndUpdate(
-      articleId,
-      { $inc: { favoriteCount: -1 } },
-      { new: true }
-    );
+     const isSaved = user.savedArticles.includes(articleId);
+    if (!isSaved) {
+      return res.status(200).json({
+        message: 'Article not in saved list',
+        savedArticles: user.savedArticles,
+      });
+    }
 
+    user.savedArticles = user.savedArticles.filter(id => id.toString() !== articleId);
+    await user.save();
+
+    const article = await storiesCollection.findById(articleId);
     if (!article) return res.status(404).json({ message: 'Article not found' });
 
-    // Мінімальне обмеження favoriteCount
-    if (article.favoriteCount < 0) {
-      article.favoriteCount = 0;
-      await article.save();
-    }
+    article.favoriteCount = Math.max(0, article.favoriteCount - 1);
+    await article.save();
 
     res.status(200).json({
       message: 'Article removed from saved list',
@@ -161,6 +160,9 @@ export const getUsersController = async (req, res) => {
 };
 
 export const patchUserController = async (req, res) => {
+  console.log("HEADERS:", req.headers);
+console.log("RAW BODY:", req.rawBody);
+console.log("BODY:", req.body);
   const userId = req.user._id;
   const updatesData = req.body;
 
