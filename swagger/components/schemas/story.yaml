@@ -1,0 +1,42 @@
+type: object
+properties:
+  _id:
+    type: string
+    description: story id
+    example: 68e5759deb0a7653b7151792
+  img:
+    type: string
+    description: url to story image
+    example: https://res.cloudinary.com/...
+  title:
+    type: string
+    description: story title
+    example: my trip to Paris
+  description:
+    type: string
+    description: description of story
+    example: when I was there...
+  category:
+    type: string
+    description: category Id
+    example: 68fb50c80ae91338641121f7
+  ownerId:
+    type: string
+    description: owner user Id
+    example: 68fb50c80ae91338641121f7
+  date:
+    type: string
+    description: story publication date
+    example: 2024-05-08T16:12:14.954173
+  favoriteCount:
+    type: number
+    description: Number of users who saved this story
+    example: 100
+  createdAt:
+    type: string
+    format: data-time
+    example: 2024-05-08T16:12:14.954173
+  updatedAt:
+    type: string
+    format: data-time
+    example: 2024-05-08T16:12:14.954173

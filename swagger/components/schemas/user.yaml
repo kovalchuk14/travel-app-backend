@@ -1,34 +1,42 @@
 type: object
-required:
-  - _id
-  - name
-  - avatarUrl
-  - description
 properties:
-  _id:
-    description: "User's id"
-    type: string
-    example: '65e4decdd286b30065d54af9'
   name:
-    description: "User's name"
     type: string
-    example: 'Дмитро'
+    description: User name
+    example: John Dou
+  email:
+    type: string
+    description: User email
+    example: example@gmail.com
+  password:
+    type: string
+    description: User password
+    example: Secret123
   avatarUrl:
-    description: "Link to user's photo"
     type: string
-    example: https://res.cloudinary.com/uqwgdu/image/upload/image.png
+    description: url to user avatar image
+    example: https://res.cloudinary.com/...
+  avatarPublicId:
+    type: string
+    description: id to your cloudinary avatar
+    example: asdj123123a
   articlesAmount:
-    description: 'The number of user articles'
     type: number
-    example: 9
+    description: amount of your articles
+    example: 1
   description:
-    description: "User's description of themselves"
     type: string
-    example: 'Привіт! Я Дмитро. Люблю знаходити приховані перлини у кожній поїздці та ділитися ними. Світ повний дивовижних відкриттів!'
-  favorites:
-    description: 'User-selected articles'
+    description: your profile description
+    example: I`m a traveler John and I...
+  savedArticles:
     type: array
-    items:
-      type: string
-      description: 'Article id'
-      example: '65e4decdd286b30065d54af9'
+    description: url to user avatar image
+    example: ['id1', 'id2']
+  createdAt:
+    type: string
+    format: data-time
+    example: 2024-05-08T16:12:14.954173
+  updatedAt:
+    type: string
+    format: data-time
+    example: 2024-05-08T16:12:14.954173

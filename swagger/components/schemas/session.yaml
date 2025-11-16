@@ -1,0 +1,34 @@
+type: object
+properties:
+  _id:
+    type: string
+    description: Session id
+    example: 68e5759deb0a7653b7151792
+  userId:
+    type: string
+    description: Session user id
+    example: 68e56ee81d5e513eb335c0c2
+  accessToken:
+    type: string
+    description: Session access token
+    example: sadfjdke14Sasdkl
+  refreshToken:
+    type: string
+    description: Session refresh token
+    example: sadfjdke14Sasdkl
+  accessTokenValidUntil:
+    type: Date
+    description: Date expiring of access token
+    example: 2025-11-16T14:25:19.025Z
+  refreshTokenValidUntil:
+    type: Date
+    description: Date expiring of refresh token
+    example: 2025-11-16T14:25:19.025Z
+  createdAt:
+    type: string
+    format: data-time
+    example: 2024-05-08T16:12:14.954173
+  updatedAt:
+    type: string
+    format: data-time
+    example: 2024-05-08T16:12:14.954173

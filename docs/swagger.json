@@ -7,26 +7,34 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "API for the story platform (authors, users, articles)"
+    "description": "API for the travell app"
   },
   "servers": [
     {
       "url": "http://localhost:3000/api",
       "description": "Local server"
+    },
+    {
+      "url": "https://travel-app-backend-9pto.onrender.com",
+      "description": "server on render.com"
     }
   ],
   "tags": [
     {
       "name": "Auth",
-      "description": "User registration, login, logout"
+      "description": "User registration, login, logout, and session refresh"
     },
     {
       "name": "Users",
-      "description": "Users (authors, profile)"
+      "description": "User profiles, avatars, and saved articles"
     },
     {
       "name": "Stories",
-      "description": "Stories (posting, editing, filtering)"
+      "description": "Stories (posting, editing, deleting, filtering)"
+    },
+    {
+      "name": "Categories",
+      "description": "Story categories with pagination"
     }
   ],
   "paths": {
@@ -116,7 +124,7 @@
                       "example": "Successfully registered a user!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/usersSchema"
+                      "$ref": "#/components/schemas/user"
                     }
                   }
                 }
@@ -274,7 +282,7 @@
         }
       }
     },
-    "/auth/refresh": {
+    "/auth/refresh-session": {
       "post": {
         "tags": [
           "Auth"
@@ -317,12 +325,12 @@
         }
       }
     },
-    "/users/me": {
+    "/users": {
       "get": {
         "tags": [
           "Users"
         ],
-        "summary": "Get list of users",
+        "summary": "UNCHECKED",
         "operationId": "getUsers",
         "description": "Get list of users",
         "security": [
@@ -432,7 +440,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Get user by id",
+        "summary": "UNCHECKED",
         "operationId": "getUserById",
         "description": "Get user by id",
         "security": [
@@ -490,12 +498,118 @@
         }
       }
     },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "NO SWAGGER INSTRUCTION",
+        "operationId": "getCurrentUser",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "NO SWAGGER INSTRUCTION",
+        "operationId": "patchCurrentUser",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/avatar": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "NO SWAGGER INSTRUCTION",
+        "operationId": "patchUserAvatar",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/saved-articles/{articleId}": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "NO SWAGGER INSTRUCTION",
+        "operationId": "saveArticle",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "articleId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "NO SWAGGER INSTRUCTION",
+        "operationId": "deleteArticle",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "articleId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            }
+          }
+        ]
+      }
+    },
     "/stories": {
+      "get": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "NO SWAGGER INSTRUCTION",
+        "operationId": "getStories",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": [
           "Stories"
         ],
-        "summary": "Stories (posting, editing, filtering)",
+        "summary": "UNCHECKED",
         "operationId": "createStory",
         "description": "Creates a new story and returns it in the response.",
         "security": [
@@ -680,7 +794,68 @@
         }
       }
     },
-    "/stories/{storiesId}": {
+    "/stories/{storyId}": {
+      "get": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Get story by id",
+        "operationId": "getStoryById",
+        "description": "Get story by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "storyId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get story by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found story with id 65ca67e7ae7f10c88b598384!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/story"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      },
       "patch": {
         "tags": [
           "Stories"
@@ -696,7 +871,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "storiesId",
+            "name": "storyId",
             "schema": {
               "type": "string"
             },
@@ -709,7 +884,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "img": {
+                  "storyImage": {
                     "type": "string",
                     "format": "binary",
                     "description": "Upload the image file"
@@ -719,21 +894,15 @@
                     "description": "Title of the story.",
                     "example": "Йорданія: шлях у Петру"
                   },
-                  "article": {
+                  "description": {
                     "type": "string",
-                    "description": "Full text of the story article.",
+                    "description": "Full text of the story",
                     "example": "Петра — одне з нових чудес світу, i вживу воно вражає ще більше..."
                   },
                   "category": {
                     "type": "string",
                     "description": "Category ID of the story.",
                     "example": "68fb50c80ae91338641121f0"
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Date when the story was created.",
-                    "example": "2025-01-10"
                   }
                 }
               }
@@ -757,7 +926,176 @@
                       "example": "Successfully patched a story!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/storySchema"
+                      "$ref": "#/components/schemas/story"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Delete story by id",
+        "operationId": "deleteStory",
+        "description": "Delete story by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "storyId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "65ca67e7ae7f10c88b598384"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully delete story by id"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "story not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "story not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get list of categories",
+        "operationId": "getCategories",
+        "description": "Get list of categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "example": 8
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found categories!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found categories!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "data",
+                        "page",
+                        "perPage",
+                        "totalItems",
+                        "totalPages",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ],
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/category"
+                          }
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "number",
+                          "example": 8
+                        },
+                        "totalItems": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "totalPages": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
                     }
                   }
                 }
@@ -783,160 +1121,131 @@
       }
     },
     "schemas": {
-      "usersSchema": {
-        "type": "object",
-        "required": [
-          "status",
-          "message",
-          "data"
-        ],
-        "properties": {
-          "status": {
-            "description": "HTTP status code",
-            "type": "integer",
-            "example": 201
-          },
-          "message": {
-            "description": "Server response message",
-            "type": "string",
-            "example": "Successfully registered a user!"
-          },
-          "data": {
-            "type": "object",
-            "required": [
-              "_id",
-              "name",
-              "email",
-              "createdAt",
-              "updatedAt"
-            ],
-            "properties": {
-              "_id": {
-                "description": "User's unique ID",
-                "type": "string",
-                "example": "6910a2425660e938dabeba42"
-              },
-              "name": {
-                "description": "User's name",
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "description": "User's email address",
-                "type": "string",
-                "example": "johndoe@gmail.com"
-              },
-              "createdAt": {
-                "description": "Date and time when the user was created",
-                "type": "string",
-                "format": "date-time",
-                "example": "2025-11-09T14:16:34.526Z"
-              },
-              "updatedAt": {
-                "description": "Date and time when the user was last updated",
-                "type": "string",
-                "format": "date-time",
-                "example": "2025-11-09T14:16:34.526Z"
-              }
-            }
-          }
-        }
-      },
       "user": {
         "type": "object",
-        "required": [
-          "_id",
-          "name",
-          "avatarUrl",
-          "description"
-        ],
         "properties": {
-          "_id": {
-            "description": "User's id",
-            "type": "string",
-            "example": "65e4decdd286b30065d54af9"
-          },
           "name": {
-            "description": "User's name",
             "type": "string",
-            "example": "Дмитро"
+            "description": "User name",
+            "example": "John Dou"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "example@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "Secret123"
           },
           "avatarUrl": {
-            "description": "Link to user's photo",
             "type": "string",
-            "example": "https://res.cloudinary.com/uqwgdu/image/upload/image.png"
+            "description": "url to user avatar image",
+            "example": "https://res.cloudinary.com/..."
+          },
+          "avatarPublicId": {
+            "type": "string",
+            "description": "id to your cloudinary avatar",
+            "example": "asdj123123a"
           },
           "articlesAmount": {
-            "description": "The number of user articles",
             "type": "number",
-            "example": 9
+            "description": "amount of your articles",
+            "example": 1
           },
           "description": {
-            "description": "User's description of themselves",
             "type": "string",
-            "example": "Привіт! Я Дмитро. Люблю знаходити приховані перлини у кожній поїздці та ділитися ними. Світ повний дивовижних відкриттів!"
+            "description": "your profile description",
+            "example": "I`m a traveler John and I..."
           },
-          "favorites": {
-            "description": "User-selected articles",
+          "savedArticles": {
             "type": "array",
-            "items": {
-              "type": "string",
-              "description": "Article id",
-              "example": "65e4decdd286b30065d54af9"
-            }
+            "description": "url to user avatar image",
+            "example": [
+              "id1",
+              "id2"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2024-05-08T16:12:14.954173"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2024-05-08T16:12:14.954173"
           }
         }
       },
-      "storySchema": {
+      "story": {
         "type": "object",
         "properties": {
-          "status": {
-            "description": "HTTP status code",
-            "type": "integer",
-            "example": 200
-          },
-          "message": {
-            "description": "Server response message",
+          "_id": {
             "type": "string",
-            "example": "Successfully registered a user!"
+            "description": "story id",
+            "example": "68e5759deb0a7653b7151792"
           },
-          "data": {
-            "type": "object",
-            "required": [
-              "img",
-              "title",
-              "article",
-              "category",
-              "favoriteCount",
-              "date"
-            ],
-            "properties": {
-              "img": {
-                "type": "string",
-                "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp"
-              },
-              "title": {
-                "type": "string",
-                "example": "Йорданія: шлях у Петру"
-              },
-              "article": {
-                "type": "string",
-                "example": "Петра — одне з нових чудес світу, i вживу воно вражає ще більше..."
-              },
-              "category": {
-                "type": "string",
-                "example": "68fb50c80ae91338641121f0"
-              },
-              "date": {
-                "type": "string",
-                "format": "date",
-                "example": "2025-01-10"
-              },
-              "favoriteCount": {
-                "type": "integer",
-                "example": 4
-              }
-            }
+          "img": {
+            "type": "string",
+            "description": "url to story image",
+            "example": "https://res.cloudinary.com/..."
+          },
+          "title": {
+            "type": "string",
+            "description": "story title",
+            "example": "my trip to Paris"
+          },
+          "description": {
+            "type": "string",
+            "description": "description of story",
+            "example": "when I was there..."
+          },
+          "category": {
+            "type": "string",
+            "description": "category Id",
+            "example": "68fb50c80ae91338641121f7"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "owner user Id",
+            "example": "68fb50c80ae91338641121f7"
+          },
+          "date": {
+            "type": "string",
+            "description": "story publication date",
+            "example": "2024-05-08T16:12:14.954173"
+          },
+          "favoriteCount": {
+            "type": "number",
+            "description": "Number of users who saved this story",
+            "example": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2024-05-08T16:12:14.954173"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2024-05-08T16:12:14.954173"
+          }
+        }
+      },
+      "category": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Category id",
+            "example": "65ca67e7ae7f10c88b598384"
+          },
+          "name": {
+            "type": "string",
+            "description": "Category name",
+            "example": "Africa"
           }
         }
       }

@@ -7,7 +7,7 @@ security:
   - bearerAuth: []
 parameters:
   - in: path
-    name: storiesId
+    name: storyId
     schema:
       type: string
     description: 'ID of the story to update'
@@ -17,7 +17,7 @@ requestBody:
       schema:
         type: object
         properties:
-          img:
+          storyImage:
             type: string
             format: binary
             description: 'Upload the image file'
@@ -25,19 +25,14 @@ requestBody:
             type: string
             description: 'Title of the story.'
             example: 'Йорданія: шлях у Петру'
-          article:
+          description:
             type: string
-            description: 'Full text of the story article.'
+            description: 'Full text of the story'
             example: 'Петра — одне з нових чудес світу, i вживу воно вражає ще більше...'
           category:
             type: string
             description: 'Category ID of the story.'
             example: '68fb50c80ae91338641121f0'
-          date:
-            type: string
-            format: date
-            description: 'Date when the story was created.'
-            example: '2025-01-10'
 responses:
   '200':
     description: 'Successfully patched a story'
@@ -53,7 +48,7 @@ responses:
               type: string
               example: 'Successfully patched a story!'
             data:
-              $ref: ../../../components/schemas/storySchema.yaml
+              $ref: ../../../components/schemas/story.yaml
   '400':
     $ref: '../../../components/responses/400.yaml'
   '401':

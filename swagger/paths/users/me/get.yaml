@@ -1,7 +1,7 @@
 tags:
-  - Stories
+  - Users
 summary: NO SWAGGER INSTRUCTION
-operationId: getStories
+operationId: getCurrentUser
 description: ''
 security:
   - bearerAuth: []

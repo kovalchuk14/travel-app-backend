@@ -5,42 +5,69 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: API for the story platform (authors, users, articles)
+  description: API for the travell app
 tags:
   - name: Auth
-    description: User registration, login, logout
+    description: User registration, login, logout, and session refresh
   - name: Users
-    description: Users (authors, profile)
+    description: User profiles, avatars, and saved articles
   - name: Stories
-    description: Stories (posting, editing, filtering)
+    description: Stories (posting, editing, deleting, filtering)
+  - name: Categories
+    description: Story categories with pagination
+
 servers:
   - url: http://localhost:3000/api
     description: Local server
+  - url: https://travel-app-backend-9pto.onrender.com
+    description: server on render.com
 paths:
   /auth/register:
     post:
-      $ref: '../swagger/paths/auth/register.yaml'
+      $ref: '../swagger/paths/auth/register/post.yaml'
   /auth/login:
     post:
-      $ref: '../swagger/paths/auth/login.yaml'
+      $ref: '../swagger/paths/auth/login/post.yaml'
   /auth/logout:
     post:
-      $ref: '../swagger/paths/auth/logout.yaml'
-  /auth/refresh:
+      $ref: '../swagger/paths/auth/logout/post.yaml'
+  /auth/refresh-session:
     post:
-      $ref: '../swagger/paths/auth/refresh.yaml'
-  /users/me:
+      $ref: '../swagger/paths/auth/resresh-session/post.yaml'
+  /users:
     get:
       $ref: '../swagger/paths/users/get.yaml'
   /users/{userId}:
     get:
       $ref: '../swagger/paths/users/{id}/get.yaml'
+  /users/me:
+    get:
+      $ref: '../swagger/paths/users/me/get.yaml'
+    patch:
+      $ref: '../swagger/paths/users/me/patch.yaml'
+  /users/avatar:
+    patch:
+      $ref: '../swagger/paths/users/avatar/patch.yaml'
+  /users/saved-articles/{articleId}:
+    post:
+      $ref: '../swagger/paths/users/saved-articles/{id}/post.yaml'
+    delete:
+      $ref: '../swagger/paths/users/saved-articles/{id}/delete.yaml'
   /stories:
+    get:
+      $ref: '../swagger/paths/stories/get.yaml'
     post:
       $ref: '../swagger/paths/stories/post.yaml'
-  /stories/{storiesId}:
+  /stories/{storyId}:
+    get:
+      $ref: '../swagger/paths/stories/{storyId}/get.yaml'
     patch:
-      $ref: '../swagger/paths/stories/{storiesId}/patch.yaml'
+      $ref: '../swagger/paths/stories/{storyId}/patch.yaml'
+    delete:
+      $ref: '../swagger/paths/stories/{storyId}/delete.yaml'
+  /categories:
+    get:
+      $ref: '../swagger/paths/categories/get.yaml'
 components:
   securitySchemes:
     bearerAuth:
