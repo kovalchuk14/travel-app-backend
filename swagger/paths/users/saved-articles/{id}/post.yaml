@@ -1,0 +1,14 @@
+tags:
+  - Users
+summary: NO SWAGGER INSTRUCTION
+operationId: saveArticle
+description: ''
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: articleId
+    required: true
+    schema:
+      type: string
+      example: '65ca67e7ae7f10c88b598384'

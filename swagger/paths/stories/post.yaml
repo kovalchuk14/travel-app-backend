@@ -1,6 +1,6 @@
 tags:
   - Stories
-summary: Stories (posting, editing, filtering)
+summary: UNCHECKED
 operationId: createStory
 description: 'Creates a new story and returns it in the response.'
 security:

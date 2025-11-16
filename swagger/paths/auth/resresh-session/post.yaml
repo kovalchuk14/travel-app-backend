@@ -1,6 +1,6 @@
 tags:
   - Auth
-summary: Refresh session gor a user 
+summary: Refresh session gor a user
 operationId: refreshUserSession
 description: Update session for a user
 security: []
@@ -22,6 +22,6 @@ responses:
               type: string
               example: Successfully refreshed a session!
   '400':
-    $ref: ../../components/responses/400.yaml
+    $ref: ../../../components/responses/400.yaml
   '500':
-    $ref: ../../components/responses/500.yaml
+    $ref: ../../../components/responses/500.yaml
