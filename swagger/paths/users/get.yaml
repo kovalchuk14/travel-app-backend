@@ -1,8 +1,8 @@
 tags:
   - Users
-summary: UNCHECKED
-operationId: getUsers
-description: 'Get list of users'
+summary: Get all users
+description: Retrieve a paginated list of all users
+operationId: getAllUsers
 security:
   - bearerAuth: []
 parameters:
@@ -10,23 +10,21 @@ parameters:
     name: page
     schema:
       type: integer
-      example: 1
+      default: 1
+    description: Page number
   - in: query
     name: perPage
     schema:
       type: integer
-      example: 8
+      default: 10
+    description: Number of items per page
 responses:
   '200':
-    description: 'Successfully found users!'
+    description: Successfully retrieved users
     content:
       application/json:
         schema:
           type: object
-          required:
-            - status
-            - message
-            - data
           properties:
             status:
               type: integer
@@ -36,38 +34,30 @@ responses:
               example: Successfully found users!
             data:
               type: object
-              required:
-                - data
-                - page
-                - perPage
-                - totalItems
-                - totalPages
-                - hasNextPage
-                - hasPreviousPage
               properties:
                 data:
                   type: array
                   items:
                     $ref: ../../components/schemas/user.yaml
                 page:
-                  type: number
+                  type: integer
                   example: 1
                 perPage:
-                  type: number
-                  example: 8
-                totalItems:
-                  type: number
-                  example: 1
+                  type: integer
+                  example: 10
                 totalPages:
-                  type: number
-                  example: 1
-                hasNextPage:
-                  type: boolean
-                  example: false
+                  type: integer
+                  example: 5
+                totalItems:
+                  type: integer
+                  example: 42
                 hasPreviousPage:
                   type: boolean
                   example: true
-  '401':
-    $ref: '../../components/responses/401.yaml'
+                hasNextPage:
+                  type: boolean
+                  example: true
   '400':
     $ref: '../../components/responses/400.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

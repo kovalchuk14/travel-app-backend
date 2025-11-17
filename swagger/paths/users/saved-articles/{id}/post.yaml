@@ -1,8 +1,8 @@
 tags:
   - Users
-summary: NO SWAGGER INSTRUCTION
-operationId: saveArticle
-description: ''
+summary: Add article to saved list
+description: Adds an article to the authenticated user's savedArticles
+operationId: addSavedArticle
 security:
   - bearerAuth: []
 parameters:
@@ -11,4 +11,27 @@ parameters:
     required: true
     schema:
       type: string
-      example: '65ca67e7ae7f10c88b598384'
+responses:
+  '200':
+    description: Article added successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Article added to saved list
+            savedArticles:
+              type: array
+              items:
+                type: string
+            favoriteCount:
+              type: integer
+              example: 5
+  '401':
+    $ref: ../../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../../components/responses/404.yaml
+  '500':
+    $ref: ../../../../components/responses/500.yaml

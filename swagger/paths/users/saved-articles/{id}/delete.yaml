@@ -1,8 +1,8 @@
 tags:
   - Users
-summary: NO SWAGGER INSTRUCTION
-operationId: deleteArticle
-description: ''
+summary: Remove article from saved list
+description: Removes an article from the authenticated user's savedArticles
+operationId: removeSavedArticle
 security:
   - bearerAuth: []
 parameters:
@@ -11,4 +11,25 @@ parameters:
     required: true
     schema:
       type: string
-      example: '65ca67e7ae7f10c88b598384'
+responses:
+  '200':
+    description: Article removed successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Article removed from saved list
+            savedArticles:
+              type: array
+              items:
+                type: string
+            favoriteCount:
+              type: integer
+              example: 4
+  '401':
+    $ref: ../../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../../components/responses/500.yaml

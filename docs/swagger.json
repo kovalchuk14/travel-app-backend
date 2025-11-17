@@ -289,9 +289,9 @@
         "tags": [
           "Users"
         ],
-        "summary": "UNCHECKED",
-        "operationId": "getUsers",
-        "description": "Get list of users",
+        "summary": "Get all users",
+        "description": "Retrieve a paginated list of all users",
+        "operationId": "getAllUsers",
         "security": [
           {
             "bearerAuth": []
@@ -303,21 +303,135 @@
             "name": "page",
             "schema": {
               "type": "integer",
-              "example": 1
-            }
+              "default": 1
+            },
+            "description": "Page number"
           },
           {
             "in": "query",
             "name": "perPage",
             "schema": {
               "type": "integer",
-              "example": 8
-            }
+              "default": 10
+            },
+            "description": "Number of items per page"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully found users!",
+            "description": "Successfully retrieved users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found users!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/user"
+                          }
+                        },
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 42
+                        },
+                        "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "hasNextPage": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a user by id",
+        "description": "Retrieve a single user by their unique id",
+        "operationId": "getUserById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found user with id ...!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -330,51 +444,429 @@
                   "properties": {
                     "status": {
                       "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User not found"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "User not found"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get current user",
+        "description": "Retrieve the currently authenticated user's profile",
+        "operationId": "getCurrentUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
                       "example": 200
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully found users!"
+                      "example": "Current user retrieved successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update current user",
+        "description": "Update fields of the authenticated user's profile",
+        "operationId": "patchCurrentUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/avatar": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user avatar",
+        "description": "Upload and update the authenticated user's avatar",
+        "operationId": "updateUserAvatar",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Avatar updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/saved-articles/{articleId}": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Add article to saved list",
+        "description": "Adds an article to the authenticated user's savedArticles",
+        "operationId": "addSavedArticle",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "articleId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Article added to saved list"
+                    },
+                    "savedArticles": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "favoriteCount": {
+                      "type": "integer",
+                      "example": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Remove article from saved list",
+        "description": "Removes an article from the authenticated user's savedArticles",
+        "operationId": "removeSavedArticle",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "articleId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Article removed from saved list"
+                    },
+                    "savedArticles": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "favoriteCount": {
+                      "type": "integer",
+                      "example": 4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/stories": {
+      "get": {
+        "tags": [
+          "Stories"
+        ],
+        "summary": "Get all stories",
+        "description": "Retrieve a paginated list of all stories. Use query param `mine=true` to get user's own stories.",
+        "operationId": "getAllStories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "perPage",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Items per page"
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Items per page"
+          },
+          {
+            "in": "query",
+            "name": "mine",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If true, returns only user's own stories (requires authentication)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved stories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found stories!"
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "data",
-                        "page",
-                        "perPage",
-                        "totalItems",
-                        "totalPages",
-                        "hasNextPage",
-                        "hasPreviousPage"
-                      ],
                       "properties": {
                         "data": {
                           "type": "array",
                           "items": {
-                            "$ref": "#/components/schemas/user"
+                            "$ref": "#/components/schemas/story"
                           }
                         },
                         "page": {
-                          "type": "number",
+                          "type": "integer",
                           "example": 1
                         },
                         "perPage": {
-                          "type": "number",
-                          "example": 8
-                        },
-                        "totalItems": {
-                          "type": "number",
-                          "example": 1
+                          "type": "integer",
+                          "example": 9
                         },
                         "totalPages": {
-                          "type": "number",
-                          "example": 1
+                          "type": "integer",
+                          "example": 5
                         },
-                        "hasNextPage": {
-                          "type": "boolean",
-                          "example": false
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 42
                         },
                         "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "hasNextPage": {
                           "type": "boolean",
                           "example": true
                         }
@@ -390,280 +882,49 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
-      }
-    },
-    "/users/{userId}": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "UNCHECKED",
-        "operationId": "getUserById",
-        "description": "Get user by id",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Get user by id",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found user with id 65ca67e7ae7f10c88b598384!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/user"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          }
-        }
-      }
-    },
-    "/users/me": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "NO SWAGGER INSTRUCTION",
-        "operationId": "getCurrentUser",
-        "description": "",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "patch": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "NO SWAGGER INSTRUCTION",
-        "operationId": "patchCurrentUser",
-        "description": "",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/avatar": {
-      "patch": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "NO SWAGGER INSTRUCTION",
-        "operationId": "patchUserAvatar",
-        "description": "",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/saved-articles/{articleId}": {
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "NO SWAGGER INSTRUCTION",
-        "operationId": "saveArticle",
-        "description": "",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "articleId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
-            }
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "NO SWAGGER INSTRUCTION",
-        "operationId": "deleteArticle",
-        "description": "",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "articleId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
-            }
-          }
-        ]
-      }
-    },
-    "/stories": {
-      "get": {
-        "tags": [
-          "Stories"
-        ],
-        "summary": "NO SWAGGER INSTRUCTION",
-        "operationId": "getStories",
-        "description": "",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       },
       "post": {
         "tags": [
           "Stories"
         ],
-        "summary": "UNCHECKED",
+        "summary": "Create a story",
+        "description": "Upload a new story with an optional image. Requires authentication.",
         "operationId": "createStory",
-        "description": "Creates a new story and returns it in the response.",
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "img",
-            "schema": {
-              "type": "string",
-              "format": "binary",
-              "description": "Upload the image file"
-            },
-            "required": true,
-            "description": "URL of the story image."
-          },
-          {
-            "in": "query",
-            "name": "title",
-            "schema": {
-              "type": "string",
-              "example": "Йорданія: шлях у Петру"
-            },
-            "required": true,
-            "description": "Title of the story."
-          },
-          {
-            "in": "query",
-            "name": "article",
-            "schema": {
-              "type": "string",
-              "example": "Петра — одне з нових чудес світу, і вживу воно вражає ще більше..."
-            },
-            "required": true,
-            "description": "Full text of the story article."
-          },
-          {
-            "in": "query",
-            "name": "category",
-            "schema": {
-              "type": "string",
-              "example": "68fb50c80ae91338641121f0"
-            },
-            "required": true,
-            "description": "Category ID of the story."
-          },
-          {
-            "in": "query",
-            "name": "date",
-            "schema": {
-              "type": "string",
-              "format": "date",
-              "example": "2025-01-10"
-            },
-            "required": true,
-            "description": "Date when the story was created."
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "required": [
-                  "img",
                   "title",
-                  "article",
-                  "category",
-                  "date"
+                  "description",
+                  "category"
                 ],
                 "properties": {
-                  "img": {
+                  "storyImage": {
                     "type": "string",
-                    "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp"
+                    "format": "binary",
+                    "description": "Image file for the story"
                   },
                   "title": {
-                    "type": "string",
-                    "example": "Йорданія: шлях у Петру"
+                    "type": "string"
                   },
-                  "article": {
-                    "type": "string",
-                    "example": "Петра — одне з нових чудес світу, і вживу воно вражає ще більше..."
+                  "description": {
+                    "type": "string"
                   },
                   "category": {
-                    "type": "string",
-                    "example": "68fb50c80ae91338641121f0"
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date",
-                    "example": "2025-01-10"
+                    "type": "string"
                   }
                 }
               }
@@ -672,7 +933,7 @@
         },
         "responses": {
           "201": {
-            "description": "Story successfully created",
+            "description": "Story created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -687,57 +948,7 @@
                       "example": "Successfully created a story!"
                     },
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "_id": {
-                          "type": "object",
-                          "properties": {
-                            "$oid": {
-                              "type": "string",
-                              "example": "68498236a100312bea079008"
-                            }
-                          }
-                        },
-                        "img": {
-                          "type": "string",
-                          "example": "https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp"
-                        },
-                        "title": {
-                          "type": "string",
-                          "example": "Йорданія: шлях у Петру"
-                        },
-                        "article": {
-                          "type": "string",
-                          "example": "Петра — одне з нових чудес світу, і вживу воно вражає ще більше..."
-                        },
-                        "category": {
-                          "type": "object",
-                          "properties": {
-                            "$oid": {
-                              "type": "string",
-                              "example": "68fb50c80ae91338641121f0"
-                            }
-                          }
-                        },
-                        "ownerId": {
-                          "type": "object",
-                          "properties": {
-                            "$oid": {
-                              "type": "string",
-                              "example": "6881563901add19ee16fd017"
-                            }
-                          }
-                        },
-                        "date": {
-                          "type": "string",
-                          "format": "date",
-                          "example": "2025-01-10"
-                        },
-                        "favoriteCount": {
-                          "type": "integer",
-                          "example": 4
-                        }
-                      }
+                      "$ref": "#/components/schemas/story"
                     }
                   }
                 }
@@ -749,6 +960,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -758,9 +972,9 @@
         "tags": [
           "Stories"
         ],
-        "summary": "Get story by id",
+        "summary": "Get a story by ID",
+        "description": "Retrieve a single story by its ID",
         "operationId": "getStoryById",
-        "description": "Get story by id",
         "security": [
           {
             "bearerAuth": []
@@ -772,14 +986,40 @@
             "name": "storyId",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
-            }
+              "type": "string"
+            },
+            "description": "ID of the story"
           }
         ],
         "responses": {
           "200": {
-            "description": "Get story by id",
+            "description": "Successfully retrieved story",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found story!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/story"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "description": "Story not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -792,26 +1032,28 @@
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "example": 200
+                      "example": 404
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully found story with id 65ca67e7ae7f10c88b598384!"
+                      "example": "Story not found"
                     },
                     "data": {
                       "type": "object",
-                      "$ref": "#/components/schemas/story"
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Story not found"
+                        }
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -819,9 +1061,9 @@
         "tags": [
           "Stories"
         ],
-        "summary": "Update story travel",
+        "summary": "Update a story",
+        "description": "Update a story by its ID. Requires authentication and ownership.",
         "operationId": "patchStory",
-        "description": "Update story.",
         "security": [
           {
             "bearerAuth": []
@@ -831,13 +1073,15 @@
           {
             "in": "path",
             "name": "storyId",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "ID of the story to update"
+            "description": "ID of the story"
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -846,22 +1090,16 @@
                   "storyImage": {
                     "type": "string",
                     "format": "binary",
-                    "description": "Upload the image file"
+                    "description": "Updated image for the story"
                   },
                   "title": {
-                    "type": "string",
-                    "description": "Title of the story.",
-                    "example": "Йорданія: шлях у Петру"
+                    "type": "string"
                   },
                   "description": {
-                    "type": "string",
-                    "description": "Full text of the story",
-                    "example": "Петра — одне з нових чудес світу, i вживу воно вражає ще більше..."
+                    "type": "string"
                   },
                   "category": {
-                    "type": "string",
-                    "description": "Category ID of the story.",
-                    "example": "68fb50c80ae91338641121f0"
+                    "type": "string"
                   }
                 }
               }
@@ -870,7 +1108,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully patched a story",
+            "description": "Story updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -882,7 +1120,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully patched a story!"
+                      "example": "Successfully updated the story!"
                     },
                     "data": {
                       "$ref": "#/components/schemas/story"
@@ -897,6 +1135,43 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Story not found or user does not have permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Story not found or you don't have permission"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Story not found or you don't have permission"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -904,9 +1179,9 @@
         "tags": [
           "Stories"
         ],
-        "summary": "Delete story by id",
+        "summary": "Delete a story",
+        "description": "Delete a story by its ID. Requires authentication and ownership.",
         "operationId": "deleteStory",
-        "description": "Delete story by id",
         "security": [
           {
             "bearerAuth": []
@@ -918,27 +1193,28 @@
             "name": "storyId",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
-            }
+              "type": "string"
+            },
+            "description": "ID of the story"
           }
         ],
         "responses": {
           "204": {
-            "description": "Successfully delete story by id"
+            "description": "Story deleted successfully, no content"
           },
-          "401": {
-            "$ref": "#/components/responses/401"
+          "400": {
+            "$ref": "#/components/responses/400"
           },
           "404": {
-            "description": "story not found",
+            "description": "Story not found or user does not have permission",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
                     "status",
-                    "message"
+                    "message",
+                    "data"
                   ],
                   "properties": {
                     "status": {
@@ -947,7 +1223,16 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "story not found"
+                      "example": "Story not found or you don't have permission"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Story not found or you don't have permission"
+                        }
+                      }
                     }
                   }
                 }

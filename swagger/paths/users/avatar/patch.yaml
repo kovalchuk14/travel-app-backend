@@ -1,7 +1,39 @@
 tags:
   - Users
-summary: NO SWAGGER INSTRUCTION
-operationId: patchUserAvatar
-description: ''
+summary: Update user avatar
+description: Upload and update the authenticated user's avatar
+operationId: updateUserAvatar
 security:
   - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          avatar:
+            type: string
+            format: binary
+responses:
+  '200':
+    description: Avatar updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Avatar updated successfully
+            data:
+              $ref: ../../../components/schemas/user.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

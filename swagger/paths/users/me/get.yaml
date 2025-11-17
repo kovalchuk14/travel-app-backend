@@ -1,7 +1,27 @@
 tags:
   - Users
-summary: NO SWAGGER INSTRUCTION
+summary: Get current user
+description: Retrieve the currently authenticated user's profile
 operationId: getCurrentUser
-description: ''
 security:
   - bearerAuth: []
+responses:
+  '200':
+    description: Successfully retrieved current user
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Current user retrieved successfully
+            data:
+              $ref: ../../../components/schemas/user.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

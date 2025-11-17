@@ -1,8 +1,8 @@
 tags:
   - Stories
-summary: Get story by id
+summary: Get a story by ID
+description: Retrieve a single story by its ID
 operationId: getStoryById
-description: 'Get story by id'
 security:
   - bearerAuth: []
 parameters:
@@ -11,10 +11,27 @@ parameters:
     required: true
     schema:
       type: string
-      example: '65ca67e7ae7f10c88b598384'
+    description: ID of the story
 responses:
   '200':
-    description: 'Get story by id'
+    description: Successfully retrieved story
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully found story!
+            data:
+              $ref: ../../../components/schemas/story.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
+  '404':
+    description: Story not found
     content:
       application/json:
         schema:
@@ -26,14 +43,15 @@ responses:
           properties:
             status:
               type: integer
-              example: 200
+              example: 404
             message:
               type: string
-              example: Successfully found story with id 65ca67e7ae7f10c88b598384!
+              example: Story not found
             data:
               type: object
-              $ref: ../../../components/schemas/story.yaml
-  '401':
-    $ref: '../../../components/responses/401.yaml'
-  '404':
-    $ref: '../../../components/responses/404.yaml'
+              properties:
+                message:
+                  type: string
+                  example: Story not found
+  '500':
+    $ref: ../../../components/responses/500.yaml

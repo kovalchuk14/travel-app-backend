@@ -1,80 +1,34 @@
 tags:
   - Stories
-summary: UNCHECKED
+summary: Create a story
+description: Upload a new story with an optional image. Requires authentication.
 operationId: createStory
-description: 'Creates a new story and returns it in the response.'
 security:
   - bearerAuth: []
-parameters:
-  - in: query
-    name: img
-    schema:
-      type: string
-      format: binary
-      description: 'Upload the image file'
-    required: true
-    description: 'URL of the story image.'
-  - in: query
-    name: title
-    schema:
-      type: string
-      example: 'Йорданія: шлях у Петру'
-    required: true
-    description: 'Title of the story.'
-  - in: query
-    name: article
-    schema:
-      type: string
-      example: 'Петра — одне з нових чудес світу, і вживу воно вражає ще більше...'
-    required: true
-    description: 'Full text of the story article.'
-  - in: query
-    name: category
-    schema:
-      type: string
-      example: '68fb50c80ae91338641121f0'
-    required: true
-    description: 'Category ID of the story.'
-  - in: query
-    name: date
-    schema:
-      type: string
-      format: date
-      example: '2025-01-10'
-    required: true
-    description: 'Date when the story was created.'
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         required:
-          - img
           - title
-          - article
+          - description
           - category
-          - date
         properties:
-          img:
+          storyImage:
             type: string
-            example: 'https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp'
+            format: binary
+            description: Image file for the story
           title:
             type: string
-            example: 'Йорданія: шлях у Петру'
-          article:
+          description:
             type: string
-            example: 'Петра — одне з нових чудес світу, і вживу воно вражає ще більше...'
           category:
             type: string
-            example: '68fb50c80ae91338641121f0'
-          date:
-            type: string
-            format: date
-            example: '2025-01-10'
 responses:
   '201':
-    description: 'Story successfully created'
+    description: Story created successfully
     content:
       application/json:
         schema:
@@ -85,45 +39,12 @@ responses:
               example: 201
             message:
               type: string
-              example: 'Successfully created a story!'
+              example: Successfully created a story!
             data:
-              type: object
-              properties:
-                _id:
-                  type: object
-                  properties:
-                    $oid:
-                      type: string
-                      example: '68498236a100312bea079008'
-                img:
-                  type: string
-                  example: 'https://ftp.goit.study/img/travel-blog/68498236a100312bea079008.webp'
-                title:
-                  type: string
-                  example: 'Йорданія: шлях у Петру'
-                article:
-                  type: string
-                  example: 'Петра — одне з нових чудес світу, і вживу воно вражає ще більше...'
-                category:
-                  type: object
-                  properties:
-                    $oid:
-                      type: string
-                      example: '68fb50c80ae91338641121f0'
-                ownerId:
-                  type: object
-                  properties:
-                    $oid:
-                      type: string
-                      example: '6881563901add19ee16fd017'
-                date:
-                  type: string
-                  format: date
-                  example: '2025-01-10'
-                favoriteCount:
-                  type: integer
-                  example: 4
-  '401':
-    $ref: '../../components/responses/401.yaml'
+              $ref: ../../components/schemas/story.yaml
   '400':
     $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

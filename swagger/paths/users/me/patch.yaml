@@ -1,7 +1,44 @@
 tags:
   - Users
-summary: NO SWAGGER INSTRUCTION
+summary: Update current user
+description: Update fields of the authenticated user's profile
 operationId: patchCurrentUser
-description: ''
 security:
   - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          password:
+            type: string
+          description:
+            type: string
+responses:
+  '200':
+    description: Successfully updated user
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: User updated successfully
+            data:
+              $ref: ../../../components/schemas/user.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

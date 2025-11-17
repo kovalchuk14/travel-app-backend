@@ -1,8 +1,8 @@
 tags:
   - Stories
-summary: Delete story by id
+summary: Delete a story
+description: Delete a story by its ID. Requires authentication and ownership.
 operationId: deleteStory
-description: 'Delete story by id'
 security:
   - bearerAuth: []
 parameters:
@@ -11,15 +11,14 @@ parameters:
     required: true
     schema:
       type: string
-      example: '65ca67e7ae7f10c88b598384'
+    description: ID of the story
 responses:
   '204':
-    description: Successfully delete story by id
-  '401':
-    $ref: ../../../components/responses/401.yaml
-
+    description: Story deleted successfully, no content
+  '400':
+    $ref: '../../../components/responses/400.yaml'
   '404':
-    description: story not found
+    description: Story not found or user does not have permission
     content:
       application/json:
         schema:
@@ -27,13 +26,19 @@ responses:
           required:
             - status
             - message
+            - data
           properties:
             status:
               type: integer
               example: 404
             message:
               type: string
-              example: story not found
-
+              example: Story not found or you don't have permission
+            data:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Story not found or you don't have permission
   '500':
-    $ref: ../../../components/responses/500.yaml
+    $ref: '../../../components/responses/500.yaml'

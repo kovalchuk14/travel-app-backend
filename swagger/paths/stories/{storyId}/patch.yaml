@@ -1,17 +1,19 @@
 tags:
   - Stories
-summary: Update story travel
+summary: Update a story
+description: Update a story by its ID. Requires authentication and ownership.
 operationId: patchStory
-description: 'Update story.'
 security:
   - bearerAuth: []
 parameters:
   - in: path
     name: storyId
+    required: true
     schema:
       type: string
-    description: 'ID of the story to update'
+    description: ID of the story
 requestBody:
+  required: true
   content:
     multipart/form-data:
       schema:
@@ -20,22 +22,16 @@ requestBody:
           storyImage:
             type: string
             format: binary
-            description: 'Upload the image file'
+            description: Updated image for the story
           title:
             type: string
-            description: 'Title of the story.'
-            example: 'Йорданія: шлях у Петру'
           description:
             type: string
-            description: 'Full text of the story'
-            example: 'Петра — одне з нових чудес світу, i вживу воно вражає ще більше...'
           category:
             type: string
-            description: 'Category ID of the story.'
-            example: '68fb50c80ae91338641121f0'
 responses:
   '200':
-    description: 'Successfully patched a story'
+    description: Story updated successfully
     content:
       application/json:
         schema:
@@ -46,10 +42,36 @@ responses:
               example: 200
             message:
               type: string
-              example: 'Successfully patched a story!'
+              example: Successfully updated the story!
             data:
               $ref: ../../../components/schemas/story.yaml
   '400':
-    $ref: '../../../components/responses/400.yaml'
+    $ref: ../../../components/responses/400.yaml
   '401':
-    $ref: '../../../components/responses/401.yaml'
+    $ref: ../../../components/responses/401.yaml
+  '404':
+    description: Story not found or user does not have permission
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: Story not found or you don't have permission
+            data:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Story not found or you don't have permission
+
+  '500':
+    $ref: ../../../components/responses/500.yaml
