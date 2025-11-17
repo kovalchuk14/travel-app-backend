@@ -1,9 +1,10 @@
 tags:
   - Auth
-summary: 'Login a user'
-operationId: loginUser
-description: 'Authenticates a user, creates a new session, and sets a cookie with the session ID.'
-security: []
+summary: Login user
+description: Login with email and password
+operationId: Login
+security:
+  - bearerAuth: []
 requestBody:
   required: true
   content:
@@ -16,15 +17,13 @@ requestBody:
         properties:
           email:
             type: string
-            description: "User's email address"
-            example: Johndoe@mail.com
+            example: user@example.com
           password:
             type: string
-            description: "User's password"
-            example: '123456789'
+            example: qwerty123
 responses:
   '200':
-    description: 'Successfully logged in a user'
+    description: Successfully logged in
     content:
       application/json:
         schema:
@@ -37,46 +36,19 @@ responses:
             status:
               type: integer
               example: 200
-              description: HTTP status code of the response
             message:
               type: string
-              example: Successfully logged in an user!
-              description: Response message
+              example: Successfully logged in
             data:
               type: object
-              required:
-                - _id
-                - name
-                - email
-                - createdAt
-                - updatedAt
               properties:
-                _id:
-                  type: string
-                  description: User's unique identifier
-                  example: 6910a2425660e938dabeba42
-                name:
-                  type: string
-                  description: User's full name
-                  example: John Doe
-                email:
-                  type: string
-                  description: User's email address
-                  example: johndoe@gmail.com
-                createdAt:
-                  type: string
-                  format: date-time
-                  description: User creation timestamp
-                  example: 2025-11-09T14:16:34.526Z
-                updatedAt:
-                  type: string
-                  format: date-time
-                  description: Last user update timestamp
-                  example: 2025-11-09T14:16:34.526Z
-
+                user:
+                  $ref: ../../../components/schemas/user.yaml
+                session:
+                  $ref: ../../../components/schemas/session.yaml
   '400':
-    $ref: ../../../components/responses/400.yaml
-  '404':
-    $ref: ../../../components/responses/404.yaml
+    $ref: '../../../components/responses/400.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
   '500':
-    $ref: ../../../components/responses/500.yaml
+    $ref: '../../../components/responses/500.yaml'

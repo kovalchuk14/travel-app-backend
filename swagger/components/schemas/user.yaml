@@ -30,13 +30,15 @@ properties:
     example: I`m a traveler John and I...
   savedArticles:
     type: array
-    description: url to user avatar image
-    example: ['id1', 'id2']
+    description: List of saved story IDs
+    items:
+      type: string
+    example: ['68fb50...', '68fb22...']
   createdAt:
     type: string
-    format: data-time
+    format: date-time
     example: 2024-05-08T16:12:14.954173
   updatedAt:
     type: string
-    format: data-time
+    format: date-time
     example: 2024-05-08T16:12:14.954173

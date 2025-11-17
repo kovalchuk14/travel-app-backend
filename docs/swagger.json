@@ -44,33 +44,11 @@
           "Auth"
         ],
         "summary": "Register a new user",
-        "operationId": "registerUser",
-        "description": "Create a new user account",
-        "security": [],
-        "parameters": [
+        "description": "Creates a new user account",
+        "operationId": "Register",
+        "security": [
           {
-            "in": "query",
-            "name": "name",
-            "schema": {
-              "type": "string",
-              "example": "John Doe"
-            }
-          },
-          {
-            "in": "query",
-            "name": "email",
-            "schema": {
-              "type": "string",
-              "example": "Johndoe@mail.com"
-            }
-          },
-          {
-            "in": "query",
-            "name": "password",
-            "schema": {
-              "type": "string",
-              "example": "123456789"
-            }
+            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -87,15 +65,15 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "example": "John Doe"
+                    "example": "Anton"
                   },
                   "email": {
                     "type": "string",
-                    "example": "Johndoe@mail.com"
+                    "example": "anton@example.com"
                   },
                   "password": {
                     "type": "string",
-                    "example": "123456789"
+                    "example": "qwerty123"
                   }
                 }
               }
@@ -134,9 +112,6 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
           "500": {
             "$ref": "#/components/responses/500"
           }
@@ -148,10 +123,14 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Login a user",
-        "operationId": "loginUser",
-        "description": "Authenticates a user, creates a new session, and sets a cookie with the session ID.",
-        "security": [],
+        "summary": "Login user",
+        "description": "Login with email and password",
+        "operationId": "Login",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -165,13 +144,11 @@
                 "properties": {
                   "email": {
                     "type": "string",
-                    "description": "User's email address",
-                    "example": "Johndoe@mail.com"
+                    "example": "user@example.com"
                   },
                   "password": {
                     "type": "string",
-                    "description": "User's password",
-                    "example": "123456789"
+                    "example": "qwerty123"
                   }
                 }
               }
@@ -180,7 +157,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully logged in a user",
+            "description": "Successfully logged in",
             "content": {
               "application/json": {
                 "schema": {
@@ -193,50 +170,20 @@
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "example": 200,
-                      "description": "HTTP status code of the response"
+                      "example": 200
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully logged in an user!",
-                      "description": "Response message"
+                      "example": "Successfully logged in"
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "_id",
-                        "name",
-                        "email",
-                        "createdAt",
-                        "updatedAt"
-                      ],
                       "properties": {
-                        "_id": {
-                          "type": "string",
-                          "description": "User's unique identifier",
-                          "example": "6910a2425660e938dabeba42"
+                        "user": {
+                          "$ref": "#/components/schemas/user"
                         },
-                        "name": {
-                          "type": "string",
-                          "description": "User's full name",
-                          "example": "John Doe"
-                        },
-                        "email": {
-                          "type": "string",
-                          "description": "User's email address",
-                          "example": "johndoe@gmail.com"
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "User creation timestamp",
-                          "example": "2025-11-09T14:16:34.526Z"
-                        },
-                        "updatedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Last user update timestamp",
-                          "example": "2025-11-09T14:16:34.526Z"
+                        "session": {
+                          "$ref": "#/components/schemas/session"
                         }
                       }
                     }
@@ -248,8 +195,8 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
-          "404": {
-            "$ref": "#/components/responses/404"
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -262,19 +209,20 @@
         "tags": [
           "Auth"
         ],
-        "summary": "logout User",
-        "operationId": "logoutUser",
-        "description": "User logs out of account",
-        "security": [],
+        "summary": "Logout user",
+        "description": "Invalidates the user's session",
+        "operationId": "Logout",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "204": {
-            "description": "logout User!"
+            "description": "Successfully logged out. No content."
           },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -287,10 +235,14 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Refresh session gor a user",
-        "operationId": "refreshUserSession",
-        "description": "Update session for a user",
-        "security": [],
+        "summary": "Refresh access and refresh tokens",
+        "description": "Generates a new pair of tokens using a valid refresh token",
+        "operationId": "RefreshSession",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully refreshed a session!",
@@ -300,7 +252,8 @@
                   "type": "object",
                   "required": [
                     "status",
-                    "message"
+                    "message",
+                    "data"
                   ],
                   "properties": {
                     "status": {
@@ -310,6 +263,9 @@
                     "message": {
                       "type": "string",
                       "example": "Successfully refreshed a session!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/session"
                     }
                   }
                 }
@@ -318,6 +274,9 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -1006,9 +965,9 @@
         "tags": [
           "Categories"
         ],
-        "summary": "Get list of categories",
-        "operationId": "getCategories",
-        "description": "Get list of categories",
+        "summary": "Get all categories",
+        "description": "Retrieve a paginated list of all categories",
+        "operationId": "getAllCategories",
         "security": [
           {
             "bearerAuth": []
@@ -1018,32 +977,31 @@
           {
             "in": "query",
             "name": "page",
+            "required": false,
             "schema": {
               "type": "integer",
-              "example": 1
-            }
+              "default": 1
+            },
+            "description": "Page number for pagination"
           },
           {
             "in": "query",
             "name": "perPage",
+            "required": false,
             "schema": {
               "type": "integer",
-              "example": 8
-            }
+              "default": 10
+            },
+            "description": "Number of items per page"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully found categories!",
+            "description": "Successfully retrieved categories",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -1055,15 +1013,6 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "data",
-                        "page",
-                        "perPage",
-                        "totalItems",
-                        "totalPages",
-                        "hasNextPage",
-                        "hasPreviousPage"
-                      ],
                       "properties": {
                         "data": {
                           "type": "array",
@@ -1072,26 +1021,26 @@
                           }
                         },
                         "page": {
-                          "type": "number",
+                          "type": "integer",
                           "example": 1
                         },
                         "perPage": {
-                          "type": "number",
-                          "example": 8
-                        },
-                        "totalItems": {
-                          "type": "number",
-                          "example": 1
+                          "type": "integer",
+                          "example": 10
                         },
                         "totalPages": {
-                          "type": "number",
-                          "example": 1
+                          "type": "integer",
+                          "example": 5
                         },
-                        "hasNextPage": {
-                          "type": "boolean",
-                          "example": false
+                        "totalItems": {
+                          "type": "integer",
+                          "example": 42
                         },
                         "hasPreviousPage": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "hasNextPage": {
                           "type": "boolean",
                           "example": true
                         }
@@ -1105,8 +1054,85 @@
           "400": {
             "$ref": "#/components/responses/400"
           },
-          "401": {
-            "$ref": "#/components/responses/401"
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/categories/{categoryId}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get category by ID",
+        "description": "Retrieve a specific category by its unique ID",
+        "operationId": "getCategoryById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Category ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found category"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/category"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Category not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -1161,20 +1187,70 @@
           },
           "savedArticles": {
             "type": "array",
-            "description": "url to user avatar image",
+            "description": "List of saved story IDs",
+            "items": {
+              "type": "string"
+            },
             "example": [
-              "id1",
-              "id2"
+              "68fb50...",
+              "68fb22..."
             ]
           },
           "createdAt": {
             "type": "string",
-            "format": "data-time",
+            "format": "date-time",
             "example": "2024-05-08T16:12:14.954173"
           },
           "updatedAt": {
             "type": "string",
-            "format": "data-time",
+            "format": "date-time",
+            "example": "2024-05-08T16:12:14.954173"
+          }
+        }
+      },
+      "session": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Session id",
+            "example": "68e5759deb0a7653b7151792"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Session user id",
+            "example": "68e56ee81d5e513eb335c0c2"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Session access token",
+            "example": "sadfjdke14Sasdkl"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Session refresh token",
+            "example": "sadfjdke14Sasdkl"
+          },
+          "accessTokenValidUntil": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date expiring of access token",
+            "example": "2025-11-16T14:25:19.025Z"
+          },
+          "refreshTokenValidUntil": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date expiring of refresh token",
+            "example": "2025-11-16T14:25:19.025Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-05-08T16:12:14.954173"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
             "example": "2024-05-08T16:12:14.954173"
           }
         }
@@ -1224,12 +1300,12 @@
           },
           "createdAt": {
             "type": "string",
-            "format": "data-time",
+            "format": "date-time",
             "example": "2024-05-08T16:12:14.954173"
           },
           "updatedAt": {
             "type": "string",
-            "format": "data-time",
+            "format": "date-time",
             "example": "2024-05-08T16:12:14.954173"
           }
         }
@@ -1252,16 +1328,11 @@
     },
     "responses": {
       "400": {
-        "description": "Bad Request",
+        "description": "Internal Server Error",
         "content": {
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1269,14 +1340,14 @@
                 },
                 "message": {
                   "type": "string",
-                  "example": "BadRequestError"
+                  "example": "Something went wrong"
                 },
                 "data": {
                   "type": "object",
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Bad Request"
+                      "example": "Internal Server Error"
                     }
                   }
                 }
@@ -1291,10 +1362,6 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message"
-              ],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1351,8 +1418,7 @@
               "type": "object",
               "required": [
                 "status",
-                "message",
-                "data"
+                "message"
               ],
               "properties": {
                 "status": {

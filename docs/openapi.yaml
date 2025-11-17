@@ -68,6 +68,9 @@ paths:
   /categories:
     get:
       $ref: '../swagger/paths/categories/get.yaml'
+  /categories/{categoryId}:
+    get:
+      $ref: '../swagger/paths/categories/{categoryId}/get.yaml'
 components:
   securitySchemes:
     bearerAuth:

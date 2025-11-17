@@ -3,9 +3,6 @@ content:
   application/json:
     schema:
       type: object
-      required:
-        - status
-        - message
       properties:
         status:
           type: integer

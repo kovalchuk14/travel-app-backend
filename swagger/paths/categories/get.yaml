@@ -1,32 +1,32 @@
 tags:
   - Categories
-summary: Get list of categories
-operationId: getCategories
-description: 'Get list of categories'
+summary: Get all categories
+description: Retrieve a paginated list of all categories
+operationId: getAllCategories
 security:
   - bearerAuth: []
 parameters:
   - in: query
     name: page
+    required: false
     schema:
       type: integer
-      example: 1
+      default: 1
+    description: Page number for pagination
   - in: query
     name: perPage
+    required: false
     schema:
       type: integer
-      example: 8
+      default: 10
+    description: Number of items per page
 responses:
   '200':
-    description: 'Successfully found categories!'
+    description: Successfully retrieved categories
     content:
       application/json:
         schema:
           type: object
-          required:
-            - status
-            - message
-            - data
           properties:
             status:
               type: integer
@@ -36,38 +36,30 @@ responses:
               example: Successfully found categories!
             data:
               type: object
-              required:
-                - data
-                - page
-                - perPage
-                - totalItems
-                - totalPages
-                - hasNextPage
-                - hasPreviousPage
               properties:
                 data:
                   type: array
                   items:
                     $ref: ../../components/schemas/category.yaml
                 page:
-                  type: number
+                  type: integer
                   example: 1
                 perPage:
-                  type: number
-                  example: 8
-                totalItems:
-                  type: number
-                  example: 1
+                  type: integer
+                  example: 10
                 totalPages:
-                  type: number
-                  example: 1
-                hasNextPage:
-                  type: boolean
-                  example: false
+                  type: integer
+                  example: 5
+                totalItems:
+                  type: integer
+                  example: 42
                 hasPreviousPage:
                   type: boolean
                   example: true
-  '401':
-    $ref: '../../components/responses/401.yaml'
+                hasNextPage:
+                  type: boolean
+                  example: true
   '400':
     $ref: '../../components/responses/400.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

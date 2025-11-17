@@ -17,18 +17,20 @@ properties:
     description: Session refresh token
     example: sadfjdke14Sasdkl
   accessTokenValidUntil:
-    type: Date
+    type: string
+    format: date-time
     description: Date expiring of access token
     example: 2025-11-16T14:25:19.025Z
   refreshTokenValidUntil:
-    type: Date
+    type: string
+    format: date-time
     description: Date expiring of refresh token
     example: 2025-11-16T14:25:19.025Z
   createdAt:
     type: string
-    format: data-time
+    format: date-time
     example: 2024-05-08T16:12:14.954173
   updatedAt:
     type: string
-    format: data-time
+    format: date-time
     example: 2024-05-08T16:12:14.954173

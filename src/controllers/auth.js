@@ -6,6 +6,7 @@ import {
 } from '../services/auth.js';
 import { SessionsCollection } from '../db/models/session.js';
 import { refreshUsersSession } from '../services/auth.js';
+import createHttpError from 'http-errors';
 
 const setupSession = (res, session) => {
   res.cookie('accessToken', session.accessToken, {
@@ -43,13 +44,13 @@ export const loginUserController = async (req, res) => {
 
   res.json({
     status: 200,
-    message: 'Successfully logged in an user!',
+    message: 'Successfully logged in',
     data: {
       user,
       session: {
         accessToken: newSession.accessToken,
         refreshToken: newSession.refreshToken,
-        expiresAt: newSession.accessTokenValidUntil,
+        accessTokenValidUntil: newSession.accessTokenValidUntil,
       },
     },
   });
@@ -58,7 +59,7 @@ export const loginUserController = async (req, res) => {
 export const logoutUserController = async (req, res) => {
   const sessionId = req.cookies.sessionId;
   if (!sessionId) {
-    return res.status(400).json({ message: 'No session to logout' });
+    return res.status(401).json({ message: 'No session to logout' });
   }
 
   await logoutUser(sessionId);
@@ -71,6 +72,9 @@ export const logoutUserController = async (req, res) => {
 };
 
 export const refreshUserSessionController = async (req, res) => {
+  if (!req.cookies.sessionId || !req.cookies.refreshToken) {
+    throw createHttpError(401, 'Not authenticated');
+  }
   const session = await refreshUsersSession({
     sessionId: req.cookies.sessionId,
     refreshToken: req.cookies.refreshToken,

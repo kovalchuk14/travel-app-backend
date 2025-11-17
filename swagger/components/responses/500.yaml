@@ -6,7 +6,6 @@ content:
       required:
         - status
         - message
-        - data
       properties:
         status:
           type: integer
@@ -17,8 +16,6 @@ content:
         data:
           type: object
           properties:
-           message:
-            type: string
-            example: Internal Server Error
-
-
+            message:
+              type: string
+              example: Internal Server Error

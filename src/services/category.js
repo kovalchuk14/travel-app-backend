@@ -18,3 +18,7 @@ export const getAllCategories = async ({ page, perPage}) => {
         ...paginationData,
     };
 }
+
+export const getCategoryById = async (categoryId) => {
+    return CategoryCollection.findById(categoryId);
+}

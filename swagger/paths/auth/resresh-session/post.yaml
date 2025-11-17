@@ -1,12 +1,13 @@
 tags:
   - Auth
-summary: Refresh session gor a user
-operationId: refreshUserSession
-description: Update session for a user
-security: []
+summary: Refresh access and refresh tokens
+description: Generates a new pair of tokens using a valid refresh token
+operationId: RefreshSession
+security:
+  - bearerAuth: []
 responses:
   '200':
-    description: 'Successfully refreshed a session!'
+    description: Successfully refreshed a session!
     content:
       application/json:
         schema:
@@ -14,6 +15,7 @@ responses:
           required:
             - status
             - message
+            - data
           properties:
             status:
               type: integer
@@ -21,7 +23,12 @@ responses:
             message:
               type: string
               example: Successfully refreshed a session!
+            data:
+              $ref: ../../../components/schemas/session.yaml
+
   '400':
-    $ref: ../../../components/responses/400.yaml
+    $ref: '../../../components/responses/400.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
   '500':
-    $ref: ../../../components/responses/500.yaml
+    $ref: '../../../components/responses/500.yaml'
