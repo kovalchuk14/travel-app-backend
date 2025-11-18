@@ -160,9 +160,6 @@ export const getUsersController = async (req, res) => {
 };
 
 export const patchUserController = async (req, res) => {
-  console.log("HEADERS:", req.headers);
-console.log("RAW BODY:", req.rawBody);
-console.log("BODY:", req.body);
   const userId = req.user._id;
   const updatesData = req.body;
 
