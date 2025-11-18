@@ -17,8 +17,6 @@ tags:
     description: Story categories with pagination
 
 servers:
-  - url: http://localhost:3000
-    description: Local server
   - url: https://travel-app-backend-9pto.onrender.com
     description: server on render.com
 paths:
