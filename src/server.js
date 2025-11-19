@@ -23,7 +23,8 @@ export function setupServer() {
   const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001', // dev
-    'https://travel-app-teal-kappa.vercel.app/', // треба замінити на vercel
+    'https://travel-app-teal-kappa.vercel.app/',
+    'https://travel-app-backend-9pto.onrender.com',// треба замінити на vercel
   ];
 
   app.use(
