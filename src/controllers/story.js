@@ -118,7 +118,7 @@ export const patchStoryController = async (req, res, next) => {
 
   const payload = {
     storyId,
-    ownerId: req.user._id,
+    userId: req.user._id,
     ...req.body,
     ...(imageUrl && { storyImage: imageUrl }),
   };
